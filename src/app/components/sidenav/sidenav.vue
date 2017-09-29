@@ -1,8 +1,12 @@
 <template>
     <div :class="{'hide':navbarState}" class="sidenav">
-        <div class="logo">
-            <h1>Juice Game</h1>
-            <span @click="toggleNavbar" class="am-icon-th-list"></span>
+        <div class="logo am-g am-g-collapse">
+            <div class="am-u-sm-8 am-vertical-align">
+                <h1 class="am-vertical-align-middle">Juice Game</h1>
+            </div>
+            <div class="am-u-sm-4 am-vertical-align">
+                <span @click="toggleSidenav" class="am-vertical-align-middle am-hide-sm am-icon-bars"></span>
+            </div>
         </div>
         <div :class="{'am-hide':navbarState}" class="search-show">
             <input type="text" placeholder="search Menu...">
@@ -32,16 +36,17 @@
 
 
 <script>
-
+import { mapState, mapMutations } from 'vuex';
 
 export default {
     name: 'sidenav',
-    data() {
-        return {
-            navbarState: false,
-        };
-    },
     computed: {
+        ...mapState([
+            'contentBlockMarginLeft'
+        ]),
+        navbarState() {
+            return this.contentBlockMarginLeft === 50;
+        },
         // ul 外边距
         ulMarginClass() {
             return {
@@ -50,14 +55,20 @@ export default {
         }
     },
     methods: {
-        toggleNavbar() {
-            this.navbarState = !this.navbarState;
-        }
+        ...mapMutations([
+            'toggleSidenav'
+        ]),
     }
 }
 </script>
 
 <style lang="less" scoped>
+@media only screen and (max-width: 640px) {
+    .sidenav {
+        left: -210px !important;
+    }
+}
+
 .sidenav {
     &.hide {
         left: -210px;
@@ -71,37 +82,33 @@ export default {
     color: rgba(255, 255, 255, 0.8);
 
     .logo {
-        position: relative;
-        height: 65px;
-        left: 0;
-        top: 0;
+
+        &>div {
+            height: 75px;
+            display: inline-block;
+        }
+
 
         h1 {
             color: #fff;
             margin: 0;
-            padding-left: 19px;
-            font-size: 30px;
-            height: 65px;
-            line-height: 65px;
+            font-size: 3rem;
+            display: inline-block;
         }
 
         span {
-
             &:hover {
                 background: none repeat scroll 0 0 rgba(0, 0, 0, 0.8);
             }
 
-            position: absolute;
-            right: 10px;
-            top: 18px;
+            cursor: pointer;
             color: rgba(255, 255, 255, 0.8);
             border-radius: 3px;
             width: 30px;
             height: 30px;
             line-height: 30px;
-            background: none repeat scroll 0 0 rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.3);
             text-align: center;
-            cursor: pointer;
             user-select: none;
         }
     }
@@ -124,29 +131,33 @@ export default {
     .search-hide {
         position: relative;
         display: inline-block;
+        z-index: 99;
         top: 0;
         left: 210px;
+
         input {
             &:hover {
                 background-color: #252D3B;
             }
             &:focus {
+                cursor: auto;
                 width: 200px;
                 padding-left: 50px;
                 padding-top: 9px;
+                border: 1px solid #ddd;
                 color: #252D3B;
-                cursor: auto;
                 box-shadow: none !important;
                 background: #fff;
                 outline: none;
             }
+
             cursor: pointer;
+            border: 1px solid transparent;
             display: block;
             padding: 9px 10px 14px;
             font-size: 1.35rem;
             width: 50px;
             transition: all .1s;
-            border: none;
             background: rgba(0, 0, 0, 0.3);
         }
     }

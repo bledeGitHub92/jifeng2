@@ -1,23 +1,40 @@
 <template>
-    <div class="topnav">
-        <div class="calendar">
-            <ul class="date">
-                <li class="icon am-icon-calendar"></li>
-                <li>{{calendar.date}}</li>
-            </ul>
-            <ul class="digital-clock">
-                <li class="icon am-icon-clock-o"></li>
-                <li>{{calendar.hour}}</li>
-                <li>:</li>
-                <li>{{calendar.minute}}</li>
-                <li>:</li>
-                <li>{{calendar.second}}</li>
-            </ul>
+    <div class="topnav am-vertical-align">
+        <div class="am-vertical-align-middle am-g am-g-collapse">
+            <div class="topnav-left am-vertical-align am-u-sm-6 am-u-md-6 am-u-lg-5">
+                <div class="am-vertical-align-middle">
+                    <ul class="am-hide-md-down calendar">
+                        <li class="icon am-icon-calendar"></li>
+                        <li>{{calendar.date}}</li>
+                    </ul>
+                    <ul class="digital-clock">
+                        <li class="icon am-icon-clock-o"></li>
+                        <li>{{calendar.hour}}</li>
+                        <li>:</li>
+                        <li>{{calendar.minute}}</li>
+                        <li>:</li>
+                        <li>{{calendar.second}}</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="topnav-right am-vertical-align am-u-sm-6 am-u-md-6 am-u-lg-7">
+                <ul class="am-verical-align-middle">
+                    <li class="am-hide-md-down">
+                        <span class="am-icon-user"></span>
+                        <span class="username">Hi, Administrator</span>
+                        <span class="cert"></span>
+                    </li>
+                    <li class="am-show-md-down">icon</li>
+                    <li @click="toggleSite" class="toggle-aside am-icon-th-list"></li>
+                </ul>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex';
+
 export default {
     name: 'topnav',
     data() {
@@ -26,6 +43,9 @@ export default {
         }
     },
     methods: {
+        ...mapMutations([
+            'toggleSite'
+        ]),
         getDate() {
             var date = new Date(),
                 year = date.getFullYear(),
@@ -43,11 +63,11 @@ export default {
             };
 
             this.calendar = times;
-
-            setTimeout(this.getDate, 1000);
+            this.$nextTick(() => {
+                setTimeout(this.getDate, 1000);
+            });
 
             return times;
-
         }
     }
 }
@@ -55,33 +75,29 @@ export default {
 
 <style lang="less" scoped>
 .topnav {
+    color: #fff;
+    height: 65px;
 
-    .calendar {
-        &::after {
-            content: '';
-            width: 0;
-            height: 100%;
-            display: inline-block;
-            vertical-align: middle;
-        }
+    &>div {
+        width: 100%;
+    }
 
-        font-size: 0;
+    ul {
+        font-size: 1.3rem;
+        margin: 0;
+    }
+
+    .topnav-left {
         height: 40px;
-        position: relative;
-        line-height: normal;
-        float: left;
-        color: #fff;
-        margin: 6px;
+        text-align: center;
         border-radius: 30px;
         border: 1px solid rgba(0, 0, 0, 0.2);
         background-color: rgba(0, 0, 0, 0.2);
         box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
-        padding: 0 30px;
+
+        &>div { font-size: 0; }
 
         ul {
-            margin: 0;
-            font-size: 1.3rem;
-            vertical-align: middle;
             display: inline-block;
 
             li.icon {
@@ -93,14 +109,49 @@ export default {
             }
         }
 
-        .date {
+        .calendar {
             border-right: 1px solid rgba(0, 0, 0, 0.4);
             box-shadow: 1px 0 0 rgba(255, 255, 255, 0.1);
             padding-right: 15px;
+            margin-right: 15px;
         }
+    }
 
-        .digital-clock {
-            padding-left: 15px;
+    .topnav-right {
+        height: 40px;
+        display: inline-block;
+
+        &>ul {
+            width: 100%;
+            font-size: 0;
+            text-align: right;
+            display: inline-block;
+
+            .toggle-aside {
+                font-size: 1.8rem;
+            }
+
+            li {
+                cursor: pointer;
+                padding: 0 15px;
+                font-size: 1.3rem;
+                vertical-align: middle;
+                display: inline-block;
+
+                .username {
+                    margin: 0 2px;
+                }
+
+                .cert {
+                    width: 0;
+                    height: 0;
+                    display: inline-block;
+                    vertical-align: middle;
+                    border-top: 4px solid;
+                    border-right: 4px solid transparent;
+                    border-left: 4px solid transparent;
+                }
+            }
         }
     }
 }
