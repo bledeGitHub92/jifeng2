@@ -3,7 +3,7 @@
         <div class="title am-g">
             <div class="menuname am-u-sm-8 am-u-md-9 am-u-lg-3 am-vertical-align">
                 <div class="am-vertical-align-middle">
-                    <span class="am-icon-paperclip"></span>
+                    <span class="am-icon-paper-plane"></span>
                     <h2>SUMMARY</h2>
                 </div>
             </div>
@@ -11,7 +11,7 @@
                 <div class="am-vertical-align">
                     <div class="am-vertical-align-middle">
                         <span class="am-icon-info-circle"></span>
-                        <span>Welcome back, Jack Sparrow</span>
+                        <span>Welcome back, Administrator.</span>
                     </div>
                 </div>
             </div>
@@ -84,7 +84,7 @@ export default {
     }
 
     min-height: 100%;
-    padding-bottom: 95px;
+    padding-bottom: 105px;
     position: relative;
     color: #9ea7b3;
     overflow: hidden;
@@ -102,7 +102,6 @@ export default {
                 font-size: 0;
 
                 span:first-child {
-                    transform: rotate(90deg);
                     margin-right: .6rem;
                     font-size: 2rem;
                 }

@@ -34,9 +34,12 @@ export default {
 </script>
 
 <style lang="less">
-html, body, .jifeng2 {
+html,
+body,
+.jifeng2 {
     height: 100%;
 }
+
 body {
     background: url('./bg.jpg') repeat;
 }

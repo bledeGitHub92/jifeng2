@@ -76,7 +76,7 @@ export default {
 <style lang="less" scoped>
 .topnav {
     color: #fff;
-    height: 65px;
+    height: 75px;
 
     &>div {
         width: 100%;

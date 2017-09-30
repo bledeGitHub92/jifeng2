@@ -30,7 +30,7 @@ export default {
 
 .right-slider {
     height: 100%;
-    padding-bottom: 65px;
+    padding-bottom: 75px;
     margin-left: 260px;
     transition: margin .1s;
 }
