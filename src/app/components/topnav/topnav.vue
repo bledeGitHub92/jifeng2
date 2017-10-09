@@ -64,7 +64,7 @@ export default {
 
             this.calendar = times;
             this.$nextTick(() => {
-                setTimeout(this.getDate, 1000);
+                setTimeout(this.getDate, 500);
             });
 
             return times;

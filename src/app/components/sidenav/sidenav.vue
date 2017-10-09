@@ -15,33 +15,19 @@
             <input type="text" placeholder="search Menu...">
         </div>
         <div class="menu">
-            <ul :style='ulMargin'>
+            <ul v-for="item in defaultMenuList" :key="item.name" :style='ulMargin'>
                 <li :class="{'am-hide-sm-only': !navbarState}" class="menu-title">
-                    <span>Widget Menu</span>
+                    <span>{{item.name}}</span>
                     <i @click="toggleMenuItem" :class="{'am-icon-spin':true}" class="gear-switch am-icon-gear"></i>
                 </li>
-                <li class="menu-list" :class="{'close':menuListState}">
+                <li class="menu-list">
                     <ul>
-                        <li class="menu-item active">
-                            <a href="#">
-                                <i :class="{'am-icon-sm': navbarState, 'am-fr': navbarState}" class="item-icon am-icon-pie-chart"></i>
-                                <span :class="{'am-hide-sm-only': !navbarState}">Summary</span>
+                        <li v-for="list in item.lists" :key="list.name" :class="{'active':route.path===list.url}" class="menu-item">
+                            <router-link :to="list.url">
+                                <i :class="[{'am-icon-sm': navbarState, 'am-fr': navbarState}, list.icon]" class="item-icon"></i>
+                                <span :class="{'am-hide-sm-only': !navbarState}">{{list.name}}</span>
                                 <!-- <h4 :class="{'am-hide-sm-only': !navbarState}" class="am-icon-plus am-fr"></h4>  -->
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="#">
-                                <i :class="{'am-icon-sm': navbarState, 'am-fr': navbarState}" class="item-icon am-icon-area-chart"></i>
-                                <span :class="{'am-hide-sm-only': !navbarState}">Element</span>
-                                <!-- <h4 :class="{'am-hide-sm-only': !navbarState}" class="am-icon-plus am-fr"></h4>  -->
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="#">
-                                <i :class="{'am-icon-sm': navbarState, 'am-fr': navbarState}" class="item-icon am-icon-search"></i>
-                                <span :class="{'am-hide-sm-only': !navbarState}">Charts</span>
-                                <!-- <h4 :class="{'am-hide-sm-only': !navbarState}" class="am-icon-plus am-fr"></h4>  -->
-                            </a>
+                            </router-link>
                         </li>
                     </ul>
                 </li>
@@ -53,17 +39,19 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
+import animate from '../../library/animate';
 
 export default {
     name: 'sidenav',
     data() {
         return {
-            menuListState: false,
         }
     },
     computed: {
         ...mapState([
-            'contentBlockMarginLeft'
+            'route',
+            'defaultMenuList',
+            'contentBlockMarginLeft',
         ]),
         navbarState() {
             return this.contentBlockMarginLeft === 50;
@@ -79,8 +67,8 @@ export default {
         ...mapMutations([
             'toggleSidenav'
         ]),
-        toggleMenuItem() {
-            this.menuListState = !this.menuListState;
+        toggleMenuItem(e) {
+            animate(e.target.parentNode.nextElementSibling.firstChild);
         }
     }
 }
@@ -231,10 +219,6 @@ export default {
                 }
 
                 .gear-switch {
-                    &.active {
-                        color: #3bb4f2;
-                    }
-
                     position: absolute;
                     top: 0;
                     right: 5px;
@@ -249,10 +233,6 @@ export default {
                 transition: max-height .3s;
                 max-height: 100%;
                 height: 100%;
-
-                &.close {
-                    height: 0;
-                }
 
                 &>ul {
                     margin: 0;
@@ -277,7 +257,6 @@ export default {
                                 transform: translate(0, -50%);
                             }
 
-                            transition: background-color .3s;
                             background-color: rgba(0, 0, 0, 0.2);
                             border-left: 2px solid #fff;
                             padding-left: 28px;
@@ -287,27 +266,11 @@ export default {
 
                     a {
                         &:hover {
-                            &::after {
-                                content: '';
-                                display: block;
-                                position: absolute;
-                                top: 50%;
-                                left: 0px;
-                                width: 0;
-                                height: 0;
-                                border-left: 6px solid #fff;
-                                border-top: 8px solid transparent;
-                                border-bottom: 8px solid transparent;
-                                transform: translate(0, -50%);
-                            }
-
-                            transition: background-color .3s;
                             background-color: rgba(0, 0, 0, 0.2);
-                            border-left: 2px solid #fff;
-                            padding-left: 28px;
                             position: relative;
                         }
 
+                        transition: background-color .3s;
                         color: #fff;
                         width: 100%;
                         display: inline-block;

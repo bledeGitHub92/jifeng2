@@ -51,7 +51,7 @@
                         </div>
                     </div>
                     <div class="panel-body">
-                        Content goes here.
+                        <router-view></router-view>
                     </div>
                 </div>
             </div>

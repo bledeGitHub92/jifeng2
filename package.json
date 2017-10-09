@@ -9,7 +9,9 @@
   "dependencies": {
     "amazeui": "^2.7.2",
     "vue": "^2.4.4",
-    "vuex": "^2.4.1"
+    "vue-router": "^2.7.0",
+    "vuex": "^2.4.1",
+    "vuex-router-sync": "^4.3.2"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.4",

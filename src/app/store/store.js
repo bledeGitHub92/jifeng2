@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import defaultMenuList from './sidenav/defaultMenuList';
 
 Vue.use(Vuex);
 
@@ -7,8 +8,10 @@ const store = new Vuex.Store({
     state: {
         // sidenav
         contentBlockMarginLeft: 260,
+        defaultMenuList,
         // topnav
-        siteTranslate: 0
+        siteTranslate: 0,
+
     },
     mutations: {
         toggleSidenav(state) {
