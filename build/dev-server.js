@@ -7,7 +7,7 @@ const compiler = webpack(config);
 
 app.use(require('connect-history-api-fallback')({
     rewrites: [
-        { from: /\/(summary|online)/, to: '/app.html' },
+        { from: /\/(summary|online|charts|dashboard|mail|form|table)/, to: '/app.html' },
     ]
 }));
 

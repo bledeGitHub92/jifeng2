@@ -15,5 +15,11 @@ export default [
             { name: 'Form', url: '/form', icon: 'am-icon-search' },
             { name: 'Tables', url: '/table', icon: 'am-icon-table' }
         ]
+    },
+    {
+        name: 'Extra Page',
+        lists: [
+            { name: 'Time Line', url: '/Time Line', icon: 'am-icon-pie-chart' },
+        ]
     }
 ]

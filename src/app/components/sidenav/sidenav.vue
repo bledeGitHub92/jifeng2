@@ -16,17 +16,16 @@
         </div>
         <div class="menu">
             <ul v-for="item in defaultMenuList" :key="item.name" :style='ulMargin'>
-                <li :class="{'am-hide-sm-only': !navbarState}" class="menu-title">
+                <li :class="{'am-hide-sm-only': !navbarState,'active':item.lists.some(list => list.url===route.path)&&!folderState.includes(item.name)}" class="menu-title">
                     <span>{{item.name}}</span>
-                    <i @click="toggleMenuItem" :class="{'am-icon-spin':true}" class="gear-switch am-icon-gear"></i>
+                    <i @click="toggleMenuItem" class="gear-switch am-icon-gear"></i>
                 </li>
                 <li class="menu-list">
-                    <ul>
-                        <li v-for="list in item.lists" :key="list.name" :class="{'active':route.path===list.url}" class="menu-item">
+                    <ul :class="{'am-block':navbarState}">
+                        <li @mouseenter="showtooltip" @mouseleave="hidetooltip" v-for="list in item.lists" :key="list.name" :class="{'active':route.path===list.url}" class="menu-item">
                             <router-link :to="list.url">
                                 <i :class="[{'am-icon-sm': navbarState, 'am-fr': navbarState}, list.icon]" class="item-icon"></i>
                                 <span :class="{'am-hide-sm-only': !navbarState}">{{list.name}}</span>
-                                <!-- <h4 :class="{'am-hide-sm-only': !navbarState}" class="am-icon-plus am-fr"></h4>  -->
                             </router-link>
                         </li>
                     </ul>
@@ -40,11 +39,15 @@
 <script>
 import { mapState, mapMutations } from 'vuex';
 import animate from '../../library/animate';
+import { showTip, hideTip } from '../../library/tooltip';
 
 export default {
     name: 'sidenav',
     data() {
         return {
+            progressing: false,
+            folder: null,
+            folderState: ''
         }
     },
     computed: {
@@ -63,12 +66,77 @@ export default {
             }
         }
     },
+    watch: {
+        folderState(menu, pre) {
+            var folder = this.folder,
+                preFolder;
+
+            if (menu) {
+                this.folder = folder = getFolder(menu);
+            }
+
+            if (pre && menu) {
+                preFolder = getFolder(pre);
+            }
+
+            animate(folder).then(() => {
+                if (preFolder) {
+                    animate(preFolder).then(() => { this.progressing = false; })
+                } else {
+                    this.progressing = false;
+                }
+            });
+
+            function getFolder(menuName) {
+                return Array.from(document.querySelectorAll('.menu-title'))
+                    .filter(li => li.firstChild.textContent === menuName)[0]
+                    .nextElementSibling.firstChild;
+            }
+        }
+    },
+    mounted() {
+        this.defaultMenuList.forEach(menu => {
+            menu.lists.forEach(list => {
+                if (list.url === this.route.path) {
+                    this.folderState = menu.name;
+                }
+            });
+        });
+    },
     methods: {
         ...mapMutations([
             'toggleSidenav'
         ]),
         toggleMenuItem(e) {
-            animate(e.target.parentNode.nextElementSibling.firstChild);
+            var menuName = e.target.previousElementSibling.textContent;
+
+            if (this.progressing) { return; }
+
+            this.progressing = true;
+
+            console.log('progressing');
+
+            if (this.folderState) {
+                if (this.folderState === menuName) {
+                    this.folderState = '';
+                } else {
+                    this.folderState = menuName;
+                }
+            } else {
+                this.folderState = menuName;
+            }
+        },
+        showtooltip(e) {
+            if (e.currentTarget.getBoundingClientRect().width === 260) {
+                var text = e.currentTarget.lastChild.textContent;
+                showTip(e.currentTarget, text);
+            }
+        },
+        hidetooltip(e) {
+            if (e.currentTarget.getBoundingClientRect().width === 260) {
+                // console.log(e.currentTarget);
+                hideTip(e.currentTarget);
+            }
         }
     }
 }
@@ -83,6 +151,12 @@ export default {
     .menu {
         &>ul {
             margin: 0 !important;
+        }
+    }
+
+    .menu-list {
+        &>ul {
+            display: block !important;
         }
     }
 
@@ -104,6 +178,7 @@ export default {
     }
 
     position: absolute;
+    z-index: 99;
     left: 0;
     top: 0;
     transition: left .1s;
@@ -162,7 +237,6 @@ export default {
     .search-hide {
         position: relative;
         display: inline-block;
-        z-index: 99;
         top: 0;
         left: 210px;
 
@@ -202,6 +276,11 @@ export default {
             background: rgba(0, 0, 0, 0.1);
 
             li.menu-title {
+                &.active {
+                    background-color: rgba(0, 0, 0, 0.15);
+                }
+
+                transition: background-color .3s;
                 display: none;
                 position: relative;
                 left: 0;
@@ -228,14 +307,10 @@ export default {
             }
 
             .menu-list {
-                overflow: hidden;
-                transform: translate(0, 0);
-                transition: max-height .3s;
-                max-height: 100%;
-                height: 100%;
-
                 &>ul {
                     margin: 0;
+                    overflow: hidden;
+                    display: none;
                 }
 
                 li.menu-item {

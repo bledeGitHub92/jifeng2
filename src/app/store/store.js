@@ -1,14 +1,15 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import defaultMenuList from './sidenav/defaultMenuList';
+import animate from '../library/animate';
 
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state: {
         // sidenav
-        contentBlockMarginLeft: 260,
         defaultMenuList,
+        contentBlockMarginLeft: 260,
         // topnav
         siteTranslate: 0,
 
