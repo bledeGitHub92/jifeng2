@@ -1,7 +1,7 @@
 <template>
     <div :style="marginLeft" class="right-slider">
         <slot name="topnav"></slot>
-        <slot name="main-section"></slot>
+        <slot name="juice-body"></slot>
     </div>
 </template>
 

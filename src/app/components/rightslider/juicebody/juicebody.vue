@@ -1,5 +1,5 @@
 <template>
-    <div class="main-section">
+    <div class="juice-body">
         <div class="title am-g">
             <div class="menuname am-u-sm-8 am-u-md-9 am-u-lg-3 am-vertical-align">
                 <div class="am-vertical-align-middle">
@@ -38,38 +38,80 @@
                 <li>Element</li>
             </ul>
         </div>
-        <div class="panel-wrapper am-g am-g-collapse">
-            <div class="am-u-sm-12">
-                <div class="panel">
-                    <div class="panel-title am-vertical-align">
-                        <div class="am-vertical-align-middle">
-                            <h6 class="am-fl">Panel</h6>
-                            <div class="tool am-fr">
-                                <span class="am-icon-table"></span>
-                                <span class="am-icon-bar-chart"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel-body">
-                        <router-view></router-view>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="footer">
-
+        <!-- juice-panel  -->
+        <router-view></router-view>
+        <div class="footer am-vertical-align">
+            <ul @click="popup" class="thumbnail-list am-vertical-align-middle am-btn-group">
+                <li v-for="widget of widgets" :title="widget.title" :class="{'active':widgetList.includes(widget)}" :key="widget.title" class="thumbnail-item am-icon-qq am-icon-sm am-btn"></li>
+            </ul>
         </div>
     </div>
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex';
+
 export default {
-    name: 'main-section',
+    name: 'juice-body',
+    data() {
+        return {
+            widgets: [
+                { title: '玩家' },
+                { title: '邮件' },
+                { title: '公告' },
+                { title: '图表' },
+            ]
+        }
+    },
+    computed: {
+        ...mapState(['widgetList'])
+    },
+    mounted() {
+        document.querySelector('input').select();
+    },
+    methods: {
+        ...mapMutations([
+            'toggleWidget'
+        ]),
+        popup(e) {
+            var title = e.target.title,
+                length = this.widgetList.length;
+
+            function setWidgetPos() {
+                if (this.widgetList.length > length) {
+                    length = this.widgetList.length;
+                    if (length > 1) {
+                        var widgets = document.querySelectorAll('.modal-widget'),
+                            prevElem = widgets[length - 2],
+                            currElem = widgets[length - 1],
+                            prevTop = prevElem.offsetTop,
+                            prevLeft = prevElem.offsetLeft,
+                            docHeight = Math.max(document.documentElement.scrollHeight, document.documentElement.clientHeight),
+                            docWidth = Math.max(document.documentElement.scrollWidth, document.documentElement.clientWidth);
+
+                        prevTop = prevTop + 40;
+                        prevLeft = prevLeft + 20;
+
+                        if (prevTop + prevElem.offsetHeight >= docHeight || prevLeft + prevElem.offsetWidth >= docWidth) {
+                            prevLeft = prevTop = 0;
+                        }
+
+                        currElem.style.cssText = `top:${prevTop}px;left:${prevLeft}px`;
+                    }
+                }
+            }
+
+            this.toggleWidget(this.widgets.filter(
+                widget => widget.title === title
+            )[0]);
+            this.$nextTick(setWidgetPos);
+        }
+    },
 }
 </script>
 
 <style lang="less" scoped>
-.main-section {
+.juice-body {
     &::before {
         content: ' ';
         display: table;
@@ -188,50 +230,6 @@ export default {
         }
     }
 
-    .panel-wrapper {
-        padding: 0 30px;
-
-        .panel {
-            background: rgb(255, 255, 255);
-            border-radius: .3rem;
-
-            .panel-title {
-                font-size: 0;
-                height: 50px;
-                margin: 30px auto 0px;
-                border-bottom: 1px dotted rgb(221, 221, 221);
-                padding: 0 15px;
-
-                &>div {
-                    width: 100%;
-                }
-
-                h6 {
-                    margin: 0;
-                    font-size: 1.4rem;
-                    font-weight: normal;
-                }
-            }
-
-            .tool {
-                font-size: 0;
-
-                span:first-child {
-                    margin-right: 1rem;
-                }
-                span {
-                    font-size: 1.4rem;
-                    cursor: pointer;
-                }
-            }
-
-            .panel-body {
-                font-size: 1.3rem;
-                padding: 15px;
-            }
-        }
-    }
-
     .footer {
         bottom: 0px;
         height: 50px;
@@ -240,6 +238,17 @@ export default {
         width: 100%;
         background: #f8f8f8;
         border-top: 1px solid #ddd;
+
+        .thumbnail-list {
+            margin: 0;
+
+            .thumbnail-item {
+                &.active {
+                    box-shadow: inset 0 3px 5px rgba(0, 0, 0, .15);
+                }
+                cursor: pointer;
+            }
+        }
     }
 }
 </style>

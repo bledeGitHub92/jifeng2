@@ -8,16 +8,16 @@ export default [
         ]
     },
     {
-        name: 'UI Element',
+        name: '查 询',
         lists: [
-            { name: 'Dashboard', url: '/dashboard', icon: 'am-icon-pie-chart' },
+            { name: '玩家查询', url: '/dashboard', icon: 'am-icon-pie-chart' },
             { name: 'Mail', url: '/mail', icon: 'am-icon-area-chart' },
             { name: 'Form', url: '/form', icon: 'am-icon-search' },
             { name: 'Tables', url: '/table', icon: 'am-icon-table' }
         ]
     },
     {
-        name: 'Extra Page',
+        name: '数 据 分 析',
         lists: [
             { name: 'Time Line', url: '/Time Line', icon: 'am-icon-pie-chart' },
         ]

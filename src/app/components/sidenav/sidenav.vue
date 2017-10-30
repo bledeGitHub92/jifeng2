@@ -38,16 +38,18 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
-import animate from '../../library/animate';
-import { showTip, hideTip } from '../../library/tooltip';
+import Animate from '../../lib/animate';
+import { showTip, hideTip } from '../../lib/tooltip';
+
+var animate = new Animate();
 
 export default {
     name: 'sidenav',
     data() {
         return {
-            progressing: false,
             folder: null,
-            folderState: ''
+            folderState: '',
+            running: false
         }
     },
     computed: {
@@ -79,12 +81,10 @@ export default {
                 preFolder = getFolder(pre);
             }
 
-            animate(folder).then(() => {
+            animate.start(folder, 'height', 300).then(() => {
                 if (preFolder) {
-                    animate(preFolder).then(() => { this.progressing = false; })
-                } else {
-                    this.progressing = false;
-                }
+                    animate.start(preFolder, 'height', 300).then(() => { this.running = false; })
+                } else { this.running = false; }
             });
 
             function getFolder(menuName) {
@@ -110,11 +110,9 @@ export default {
         toggleMenuItem(e) {
             var menuName = e.target.previousElementSibling.textContent;
 
-            if (this.progressing) { return; }
+            if (this.running) { return false; }
 
-            this.progressing = true;
-
-            console.log('progressing');
+            this.running = true;
 
             if (this.folderState) {
                 if (this.folderState === menuName) {
@@ -178,7 +176,6 @@ export default {
     }
 
     position: absolute;
-    z-index: 99;
     left: 0;
     top: 0;
     transition: left .1s;

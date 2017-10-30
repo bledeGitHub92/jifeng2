@@ -1,12 +1,17 @@
 <template>
-    <div>
-        summary
-    </div>
+    <juice-panel>
+        <div>
+            summary
+        </div>
+    </juice-panel>
 </template>
 
 <script>
+import juicePanel from '../components/juicePanel.vue';
+
 export default {
-    name: 'Summary'
+    name: 'Summary',
+    components: { juicePanel }
 }
 </script>
 
