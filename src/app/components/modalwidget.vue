@@ -5,8 +5,8 @@
             <span @click="closeWidget" class="am-icon-times"></span>
         </div>
         <div class="modal-body clearfix">
-            <div class="modal-filter">
-                <slot name="filter"></slot>
+            <div class="modal-search">
+                <slot name="search"></slot>
             </div>
             <div class="modal-content">
                 <slot :name="msg.title"></slot>
@@ -28,8 +28,8 @@ export default {
     },
     methods: {
         ...mapMutations(['toggleWidget']),
-        closeWidget(e) {
-            var title = e.target.previousElementSibling.textContent;
+        closeWidget(event) {
+            var title = event.target.previousElementSibling.textContent;
 
             this.toggleWidget(this.widgetList.filter(
                 widget => widget.title === title
@@ -81,7 +81,7 @@ export default {
     .modal-body {
         padding: 20px;
 
-        .modal-filter {
+        .modal-search {
             padding-bottom: 20px;
             border-bottom: 1px dashed #ddd;
             margin-bottom: 20px;

@@ -32,3 +32,14 @@ export function getElem(elem, className) {
     }
     return elem = typeof elem === 'object' ? elem : null;
 }
+
+// widget 层叠计数器
+export var stackCounter = (function() {
+    var counter = 0;
+
+    return {
+        increase() {
+            return ++counter;
+        }
+    }
+})();

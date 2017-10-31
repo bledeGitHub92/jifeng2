@@ -50,63 +50,94 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
+import { stackCounter } from '../../../lib/utils';
 
 export default {
     name: 'juice-body',
     data() {
         return {
+            // widget 列表
             widgets: [
                 { title: '玩家' },
                 { title: '邮件' },
                 { title: '公告' },
                 { title: '图表' },
-            ]
+            ],
         }
     },
     computed: {
         ...mapState(['widgetList'])
     },
     mounted() {
-        document.querySelector('input').select();
+        // 打开 widget 快捷键
+        document.addEventListener('keydown', this.documentKeydownListener, false);
+    },
+    beforeDestroy() {
+        document.removeEventListener('keydown', this.documentKeydownListener, false);
     },
     methods: {
         ...mapMutations([
-            'toggleWidget'
+            'toggleWidget', 'clearWidgetList'
         ]),
-        popup(e) {
-            var title = e.target.title,
-                length = this.widgetList.length;
+        documentKeydownListener(event) {
+            popupOfShortcutKey.call(this, event);
+            this.clearWidgetList(event.keyCode);
 
-            function setWidgetPos() {
-                if (this.widgetList.length > length) {
-                    length = this.widgetList.length;
-                    if (length > 1) {
-                        var widgets = document.querySelectorAll('.modal-widget'),
-                            prevElem = widgets[length - 2],
-                            currElem = widgets[length - 1],
-                            prevTop = prevElem.offsetTop,
-                            prevLeft = prevElem.offsetLeft,
-                            docHeight = Math.max(document.documentElement.scrollHeight, document.documentElement.clientHeight),
-                            docWidth = Math.max(document.documentElement.scrollWidth, document.documentElement.clientWidth);
+            function popupOfShortcutKey(event) {
+                var index = [49, 50, 51, 52].indexOf(event.keyCode),
+                    length = this.widgetList.length,
+                    widget = null;
 
-                        prevTop = prevTop + 40;
-                        prevLeft = prevLeft + 20;
-
-                        if (prevTop + prevElem.offsetHeight >= docHeight || prevLeft + prevElem.offsetWidth >= docWidth) {
-                            prevLeft = prevTop = 0;
-                        }
-
-                        currElem.style.cssText = `top:${prevTop}px;left:${prevLeft}px`;
-                    }
+                if (event.altKey && index !== -1) {
+                    this.toggleWidget(this.widgets[index]);
+                    this.$nextTick(() => {
+                        widget = initWidgetPos(length, this.widgetList);
+                        if (widget) { initWidgetStack(widget, stackCounter.increase()); }
+                    });
                 }
             }
+        },
+        popup(event) {
+            var title = event.target.title,
+                length = this.widgetList.length,
+                widget = null;
 
             this.toggleWidget(this.widgets.filter(
                 widget => widget.title === title
             )[0]);
-            this.$nextTick(setWidgetPos);
-        }
+            this.$nextTick(() => {
+                widget = initWidgetPos(length, this.widgetList);
+                if (widget) { initWidgetStack(widget, stackCounter.increase()); }
+            });
+        },
     },
+}
+
+// 初始化 widget 的位置
+function initWidgetPos(length, list) {
+    if (list.length > length) {
+        length = list.length;
+        if (length > 1) {
+            var widgets = document.querySelectorAll('.modal-widget'),
+                prevElem = widgets[length - 2],
+                currElem = widgets[length - 1],
+                currTop = prevElem.offsetTop + 40,
+                currLeft = prevElem.offsetLeft + 20,
+                docHeight = Math.max(document.documentElement.scrollHeight, document.documentElement.clientHeight),
+                docWidth = Math.max(document.documentElement.scrollWidth, document.documentElement.clientWidth);
+
+            if (currTop + currElem.offsetHeight >= docHeight || currLeft + currElem.offsetWidth >= docWidth) {
+                currLeft = currTop = 0;
+            }
+
+            currElem.style.cssText = `top:${currTop}px;left:${currLeft}px`;
+            return currElem;
+        }
+    }
+}
+// 初始化 widget 的层叠顺序
+function initWidgetStack(widget, counter) {
+    widget.style.zIndex = counter;
 }
 </script>
 

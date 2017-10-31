@@ -7,7 +7,7 @@
         </right-slider>
         <!-- <back-drop></back-drop>  -->
         <modal-widget v-for="widget of widgetList" :key="widget.title" :msg="widget">
-            <div slot="filter">
+            <div slot="search">
                 <form action="">
                     <juice-select></juice-select>
                     <input type="text" size="12" placeholder="角色信息" />
@@ -30,7 +30,7 @@ import juiceTable from './components/juicetable.vue';
 import juiceSelect from './components/juiceselect.vue';
 import { mapState, mapMutations } from 'vuex';
 import DragDrop from './lib/dragDrop';
-import {getElem} from './lib/utils';
+import { getElem } from './lib/utils';
 import 'amazeui/dist/css/amazeui.min.css';
 
 export default {
@@ -57,22 +57,15 @@ export default {
         },
         forbidContextmenu(event) {
             event.preventDefault();
-        },
-        shortcutKey(event) {
-            if (event.altKey && [49, 50, 51].includes(event.keyCode)) {
-                // this.changeBackdrop('show');
-            }
         }
     },
     mounted() {
-        document.addEventListener('keyup', this.shortcutKey, false);
         document.addEventListener('mousewheel', this.forbidMouseWheel, false);
         document.addEventListener('DOMMouseScroll', this.forbidMouseWheel, false);
         document.addEventListener('contextmenu', this.forbidContextmenu, false);
         DragDrop.enable();
     },
     beforeDestroy() {
-        document.removeEventListener('keyup', this.shortcutKey, false);
         document.removeEventListener('mousewheel', this.forbidMouseWheel, false);
         document.removeEventListener('DOMMouseScroll', this.forbidMouseWheel, false);
         document.removeEventListener('contextmenu', this.forbidContextmenu, false);
@@ -95,6 +88,10 @@ body {
 ul {
     list-style-type: none;
     padding: 0;
+}
+
+input, select {
+    outline: none;
 }
 
 .jifeng2 {

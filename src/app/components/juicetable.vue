@@ -1,10 +1,14 @@
 <template>
     <div class="table-wrapper">
-        <table class="table-widget" @copy="clipboard" @contextmenu="contextmenu" @mousewheel="swipeTable" @DOMMouseScroll="swipeTable" :style="{'left':leftOfTable+'px'}">
+        <div class="table-utils clearfix">
+            <!-- TODO: 导出按钮样式调整  -->
+            <input @keyup="tableFilter" type="text" placeholder="搜索..">
+            <span style="float:right;">csv</span>
+            <span style="float:right;">excel</span>
+        </div>
+        <table class="table-widget" @contextmenu="contextmenu" @mousewheel="swipeTable" @DOMMouseScroll="swipeTable" :style="{'left':leftOfTable+'px'}">
             <tr v-for="row of breakList[activePage]" :key="row.id">
-                <td v-for="(col,key) of row" :key="key" :title="col">
-                    {{col}}
-                </td>
+                <td v-for="(col,key) of row" :key="key" :title="col">{{col}}</td>
             </tr>
         </table>
         <div @click="jump" class="pagination am-btn-group am-btn-group-xs">
@@ -15,7 +19,7 @@
             <button type="button" class="am-btn am-icon-angle-left"></button>
             <button type="button" class="am-btn am-icon-angle-right"></button>
         </div>
-        <ul v-show="stateOfContextmenu" :style="{'left':leftOfContextmenu+'px','top':topOfContextmenu+'px'}" class="contextmenu">
+        <ul v-show="stateOfContextmenu" :style="contextPos" class="contextmenu">
             <li class="copyBtn">复制</li>
         </ul>
     </div>
@@ -30,9 +34,9 @@ export default {
     name: 'juice-table',
     data() {
         return {
+            list,
             leftOfTable: 0,
             activePage: 0,
-            list,
             // contextmenu
             leftOfContextmenu: 0,
             topOfContextmenu: 0,
@@ -41,6 +45,14 @@ export default {
         }
     },
     computed: {
+        // context 的位置
+        contextPos() {
+            return {
+                left: this.leftOfContextmenu + 'px',
+                top: this.topOfContextmenu + 'px'
+            };
+        },
+        // 分组后的表格
         breakList() {
             var ret = [],
                 list = this.list,
@@ -57,6 +69,7 @@ export default {
     mounted() {
         var ctx = this;
 
+        // 点击 table 外的区域关闭 contextmenu
         document.addEventListener('click', this.hideContext, false);
 
         var clipboard = this.clipboard = new Clipboard('.copyBtn', {
@@ -83,8 +96,22 @@ export default {
         document.removeEventListener('click', this.hideContext, false);
     },
     methods: {
-        clipboard(event) {
-            console.log(event);
+        // 筛选表格
+        tableFilter(event) {
+            var value = event.target.value;
+            if (!value) {
+                return this.list = list;
+            }
+            if (event.keyCode === 13) {
+                this.activePage = 0;
+                this.list = this.list.filter(row => {
+                    for (let n in row) {
+                        if ((row[n] + '').indexOf(value) !== -1) {
+                            return true;
+                        }
+                    }
+                });
+            }
         },
         // TODO: 仅在框内显示
         contextmenu(event) {
@@ -161,6 +188,7 @@ table {
         border: 1px solid #ddd;
         padding: 8px;
         max-width: 100px;
+        min-width: 60px;
         cursor: default;
     }
     th {
@@ -169,6 +197,16 @@ table {
 
     td {
         text-align: right;
+    }
+}
+
+.table-utils {
+    font-size: 12px;
+    margin-bottom: 4px;
+
+    input {
+        padding: 3px 8px;
+        width: 100px; // float: right;
     }
 }
 

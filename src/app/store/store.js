@@ -41,13 +41,18 @@ const store = new Vuex.Store({
             }
         },
         // 切换 modal-widget
-        toggleWidget(state, payload) {
-            var index;
-            if (state.widgetList.includes(payload)) {
-                index = state.widgetList.indexOf(payload);
+        toggleWidget(state, widget) {
+            var index = state.widgetList.indexOf(widget);
+            if (index !== -1) {
                 state.widgetList.splice(index, 1);
             } else {
-                state.widgetList.push(payload);
+                state.widgetList.push(widget);
+            }
+        },
+        // 清空 modal-widget
+        clearWidgetList(state, keyCode) {
+            if (keyCode === 27) {
+                state.widgetList = [];
             }
         }
     },
