@@ -1,5 +1,5 @@
 <template>
-    <div @click="hideBackdrop" v-show="backdropState" class="backdrop">
+    <div @click="hideBackdrop" v-show="backdropState" class="backdrop am-vertical-align">
         <slot></slot>
     </div>
 </template>
@@ -13,7 +13,9 @@ export default {
         ...mapState(['backdropState'])
     },
     methods: {
-        ...mapMutations(['changeBackdrop']),
+        ...mapMutations([
+            'changeBackdrop'
+        ]),
         hideBackdrop() {
             this.changeBackdrop('hide');
         }
@@ -22,13 +24,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 .backdrop {
     position: fixed;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, .3);
+    background-color: rgba(255, 255, 255, .7);
+    text-align: center;
+    z-index: 999999999;
 }
 </style>

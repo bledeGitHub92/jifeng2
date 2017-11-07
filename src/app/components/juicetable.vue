@@ -6,104 +6,111 @@
             <span style="float:right;">csv</span>
             <span style="float:right;">excel</span>
         </div>
-        <table class="table-widget" @contextmenu="contextmenu" @mousewheel="swipeTable" @DOMMouseScroll="swipeTable" :style="{'left':leftOfTable+'px'}">
-            <tr v-for="row of breakList[activePage]" :key="row.id">
+        <table class="table-widget" @mousedown="selectRow" @contextmenu="showContext" @mousewheel="swipeTable" @DOMMouseScroll="swipeTable" :style="{'left':leftOfTable+'px'}">
+            <tr>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+                <th title="战力">战力</th>
+            </tr>
+            <tr v-for="row of breakList[page]" :key="row.id" :class="{active:selectedPlayers.includes(row)}">
                 <td v-for="(col,key) of row" :key="key" :title="col">{{col}}</td>
+            </tr>
+            <tr v-if="list.length===0">
+                <td colspan="21" style="text-align:center">没有相关记录</td>
             </tr>
         </table>
         <div @click="jump" class="pagination am-btn-group am-btn-group-xs">
             <!-- TODO: 分页方式 -->
             <span style="float:left;margin-right:10px;font-size:12px;color:#73879c;margin-top:5px;">
-                {{activePage+1}} / {{breakList.length}}
+                {{page+1}} / {{breakList.length}}
             </span>
             <button type="button" class="am-btn am-icon-angle-left"></button>
             <button type="button" class="am-btn am-icon-angle-right"></button>
         </div>
-        <ul v-show="stateOfContextmenu" :style="contextPos" class="contextmenu">
-            <li class="copyBtn">复制</li>
-        </ul>
     </div>
 </template>
 
 <script>
-import { getElem } from '../lib/utils';
+import { getParent } from '../lib/utils';
 import list from './role.json';
-import Clipboard from 'clipboard';
+import { mapState, mapMutations, mapActions } from 'vuex';
 
 export default {
     name: 'juice-table',
     data() {
         return {
+            // table
             list,
+            page: 0,
+            maxRow: 5,
             leftOfTable: 0,
-            activePage: 0,
-            // contextmenu
-            leftOfContextmenu: 0,
-            topOfContextmenu: 0,
-            stateOfContextmenu: false,
-            copyValue: ''
         }
     },
     computed: {
-        // context 的位置
-        contextPos() {
-            return {
-                left: this.leftOfContextmenu + 'px',
-                top: this.topOfContextmenu + 'px'
-            };
-        },
+        ...mapState([
+            'selectedPlayers'
+        ]),
         // 分组后的表格
         breakList() {
-            var ret = [],
+            var partOfTable = [],
                 list = this.list,
                 length = list.length,
-                i = 0, step = 5;
+                i = 0, maxRow = this.maxRow;
 
-            while (i <= length) {
-                ret.push(list.slice(i, i + step));
-                i += step;
+            while (i < length) {
+                partOfTable.push(list.slice(i, i + maxRow));
+                i += maxRow;
             }
-            return ret;
+            return partOfTable;
         }
     },
-    mounted() {
-        var ctx = this;
-
-        // 点击 table 外的区域关闭 contextmenu
-        document.addEventListener('click', this.hideContext, false);
-
-        var clipboard = this.clipboard = new Clipboard('.copyBtn', {
-            text(trigger) {
-                return ctx.copyValue;
-            }
-        });
-        // TODO: 复制成功后的提示
-        clipboard.on('success', function(e) {
-            // console.info('Action:', e.action);
-            // console.info('Text:', e.text);
-            // console.info('Trigger:', e.trigger);
-
-            ctx.stateOfContextmenu = false;
-            e.clearSelection();
-        });
-        clipboard.on('error', function(e) {
-            console.error('Action:', e.action);
-            console.error('Trigger:', e.trigger);
-        });
-    },
-    beforeDestroy() {
-        this.clipboard.destroy();
-        document.removeEventListener('click', this.hideContext, false);
-    },
     methods: {
+        ...mapMutations([
+            'setMenuLocation', 'showMenu',
+            'updateCopyValue'
+        ]),
+        ...mapActions(['togglePlayer']),
+        // 选择行
+        selectRow(event) {
+            // TODO: 取消邮件操作玩家列表
+            var target = event.target;
+            // 点击表头无效
+            if (target.nodeName.toLowerCase() === 'th' || event.button !== 0) { return; }
+            var tr = getParent(target, 'tr'),
+                table = getParent(tr, 'table'),
+                currList = this.breakList[this.page],
+                order = Array.from(table.children).indexOf(tr) - 1,
+                player = currList[order];
+
+                this.togglePlayer(player);
+        },
         // 筛选表格
         tableFilter(event) {
-            var value = event.target.value;
-            if (!value) {
-                return this.list = list;
-            }
+            var value;
             if (event.keyCode === 13) {
-                this.activePage = 0;
+                value = event.target.value;
+                if (!value) {
+                    return this.list = list;
+                }
+                this.page = 0;
                 this.list = this.list.filter(row => {
                     for (let n in row) {
                         if ((row[n] + '').indexOf(value) !== -1) {
@@ -113,27 +120,12 @@ export default {
                 });
             }
         },
-        // TODO: 仅在框内显示
-        contextmenu(event) {
-            var widget = getElem(event.target, 'modal-widget');
-
-            this.copyValue = event.target.title;
-            this.stateOfContextmenu = true;
-            this.leftOfContextmenu = event.pageX - widget.offsetLeft;
-            this.topOfContextmenu = event.pageY - widget.offsetTop;
-        },
-        hideContext(event) {
-            var isCopyBtn = getElem(event.target, 'copyBtn');
-            if (!isCopyBtn) {
-                this.stateOfContextmenu = false;
-            }
-        },
         // 下一页
         jump(event) {
             var method = event.target.className.indexOf('am-icon-angle-right') !== -1 ? 'next' : 'prev',
                 strategy = {
-                    next: () => { this.activePage >= this.breakList.length - 1 ? this.activePage : this.activePage += 1; },
-                    prev: () => { this.activePage <= 0 ? 0 : this.activePage -= 1; }
+                    next: () => { this.page >= this.breakList.length - 1 ? this.page : this.page += 1; },
+                    prev: () => { this.page <= 0 ? 0 : this.page -= 1; }
                 };
 
             strategy[method]();
@@ -141,7 +133,7 @@ export default {
         // TODO: 优化滑动动画
         swipeTable(event) {
             var wheelDelta = event.wheelDelta || event.detail * -40,
-                maxLeft = this.$el.offsetWidth - getElem(event.target, 'table-widget').offsetWidth,
+                maxLeft = this.$el.offsetWidth - getParent(event.target, '.table-widget').offsetWidth,
                 multiple = Math.abs(wheelDelta) / 120,
                 step = 30 * multiple;
 
@@ -156,7 +148,18 @@ export default {
                     this.leftOfTable = 0;
                 }
             }
-        }
+        },
+        // TODO: 仅在框内显示
+        showContext(event) {
+            event.preventDefault();
+
+            this.updateCopyValue(event.target.title);
+            this.showMenu();
+            this.setMenuLocation({
+                left: event.pageX,
+                top: event.pageY
+            });
+        },
     }
 }
 </script>
@@ -171,12 +174,18 @@ table {
     color: #73879c;
     font-size: 13px;
     position: relative;
+    width: 100%;
     top: 0;
     left: 0;
     transition: left .3s;
 
     tr:nth-child(even) {
         background-color: #f9f9f9;
+    }
+
+    tr.active {
+        background-color: #389CFF;
+        color: #fff;
     }
 
     & th,
@@ -213,29 +222,5 @@ table {
 .pagination {
     float: right;
     margin-top: 10px;
-}
-
-.contextmenu {
-    user-select: none;
-    color: #333;
-    margin: 0;
-    width: 140px;
-    background-color: #fff;
-    font-size: 13px;
-    position: absolute;
-    left: 0;
-    top: 0;
-    border: 1px solid #ddd;
-    box-shadow: 4px 4px 2px rgba(0, 0, 0, 0.5);
-
-    li {
-        &:hover {
-            background-color: #e5e5e5;
-        }
-        height: 24px;
-        line-height: 24px;
-        cursor: default;
-        padding-left: 20px;
-    }
 }
 </style>

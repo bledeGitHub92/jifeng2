@@ -2,7 +2,7 @@
     <div class="modal-widget">
         <div class="modal-header">
             <span>{{msg.title}}</span>
-            <span @click="closeWidget" class="am-icon-times"></span>
+            <span @click="closeWidget" class="am-icon-times" title="Esc"></span>
         </div>
         <div class="modal-body clearfix">
             <div class="modal-search">
@@ -18,7 +18,6 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
-import { getElem } from '../lib/utils';
 
 export default {
     name: 'modal-widget',
@@ -42,6 +41,7 @@ export default {
 
 <style lang="less" scoped>
 .modal-widget {
+    animation: pop-appear .3s cubic-bezier(.8, .02, .45, .91) forwards;
     position: absolute;
     left: 0px;
     top: 0px;
@@ -51,7 +51,7 @@ export default {
     background-color: #fff;
     border: 1px solid #e5e5e5;
     border-radius: 6px;
-    box-shadow: 6px 6px 2px rgba(0, 0, 0, .5);
+    box-shadow: 6px 6px 2px -2px rgba(0, 0, 0, .4);
 
     .modal-header {
         background-color: #f7f7f7;

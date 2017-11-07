@@ -1,4 +1,4 @@
-import { getElem, stackCounter } from './utils';
+import { getParent, stackCounter } from './utils';
 
 var DragDrop = function () {
     var dragging = null,
@@ -21,18 +21,18 @@ var DragDrop = function () {
         switch (event.type) {
             case "mousedown":
                 // 点击整个 widget 递增 z-index
-                if (dragging = getElem(target, 'modal-widget')) {
+                if (dragging = getParent(target, '.modal-widget')) {
                     dragging.style.zIndex = stackCounter.increase();
                 }
                 // 点击 modal-header 移动 widget
-                if (dragging = getElem(getElem(target, 'modal-header'), 'modal-widget')) {
+                if (dragging = getParent(getParent(target, '.modal-header'), '.modal-widget')) {
                     diffX = event.clientX - dragging.offsetLeft;
                     diffY = event.clientY - dragging.offsetTop;
                     elemWidth = dragging.offsetWidth;
                     elemHeight = dragging.offsetHeight;
                 }
                 // 拖动关闭按钮无效
-                if (getElem(target, 'am-icon-times')) {
+                if (getParent(target, '.am-icon-times')) {
                     dragging = null;
                 }
                 break;

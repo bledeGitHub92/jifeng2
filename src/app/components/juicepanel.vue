@@ -4,10 +4,11 @@
             <div class="panel">
                 <div class="panel-title am-vertical-align">
                     <div class="am-vertical-align-middle">
-                        <h6 class="am-fl">Panel</h6>
+                        <h6 class="am-fl">{{title}}</h6>
                         <div class="tool am-fr">
-                            <span class="am-icon-table"></span>
-                            <span class="am-icon-bar-chart"></span>
+                            <span @click="$emit('toolbar',index)" v-for="(btn,index) of actBtn" :key="btn.icon" :class="btn.icon" :title="btn.title"></span>
+                            <!-- <span class="am-icon-table"></span>
+                                <span class="am-icon-bar-chart"></span> -->
                         </div>
                     </div>
                 </div>
@@ -22,12 +23,17 @@
 <script>
 export default {
     name: 'juice-panel',
+    props: {
+        title: String,
+        actBtn: Array,
+    }
 }
 </script>
 
 <style lang="less" scoped>
 .panel-wrapper {
     padding: 0 30px;
+    animation: pop-appear .3s cubic-bezier(.8, .02, .45, .91) forwards;
 
     .panel {
         background: rgb(255, 255, 255);

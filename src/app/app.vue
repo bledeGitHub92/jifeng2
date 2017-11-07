@@ -5,7 +5,9 @@
             <top-nav slot="topnav"></top-nav>
             <juice-body slot="juice-body"></juice-body>
         </right-slider>
-        <!-- <back-drop></back-drop>  -->
+        <back-drop>
+            <event-dialog></event-dialog>
+        </back-drop>
         <modal-widget v-for="widget of widgetList" :key="widget.title" :msg="widget">
             <div slot="search">
                 <form action="">
@@ -16,6 +18,7 @@
             </div>
             <juice-table slot="玩家"></juice-table>
         </modal-widget>
+        <context-menu></context-menu>
     </div>
 </template>
 
@@ -25,56 +28,122 @@ import rightSlider from './components/rightslider/rightslider.vue';
 import juiceBody from './components/rightslider/juicebody/juicebody.vue';
 import topNav from './components/rightslider/topnav/topnav.vue';
 import backDrop from './components/backdrop.vue';
+import eventDialog from './components/eventdialog/eventdialog.vue';
 import modalWidget from './components/modalwidget.vue';
 import juiceTable from './components/juicetable.vue';
 import juiceSelect from './components/juiceselect.vue';
+import contextMenu from './components/contextmenu/contextmenu.vue';
 import { mapState, mapMutations } from 'vuex';
 import DragDrop from './lib/dragDrop';
-import { getElem } from './lib/utils';
+import { getParent } from './lib/utils';
+import Clipboard from 'clipboard';
 import 'amazeui/dist/css/amazeui.min.css';
+
+// 剪贴板对象
+var clipboard = null;
 
 export default {
     name: 'app',
     components: {
         rightSlider, sideNav, topNav,
         juiceBody, backDrop, modalWidget,
-        juiceTable, juiceSelect
+        juiceTable, juiceSelect, contextMenu,
+        eventDialog
     },
     computed: {
         ...mapState([
-            'siteTranslate', 'widgetList'
+            'siteTranslate', 'widgetList',
+            'menuList', 'copyValue'
         ]),
         position() {
             return { transform: `translate(${this.siteTranslate}px)` };
         }
     },
     methods: {
-        ...mapMutations(['changeBackdrop']),
+        ...mapMutations([
+            'changeBackdrop', 'hideMenu'
+        ]),
+        // 初始化 contextmenu 的功能
+        initContextmenuEvent() {
+            var menu = this.menuList,
+                ctx = this,
+                array = [
+                    {
+                        className: 'copy',
+                        method() {
+                            clipboard = new Clipboard('.' + this.className, {
+                                text(trigger) {
+                                    return ctx.copyValue;
+                                }
+                            });
+                            // TODO: 复制成功后的提示
+                            clipboard.on('success', function(event) {
+                                // console.info('Action:', event.action);
+                                // console.info('Text:', event.text);
+                                // console.info('Trigger:', event.trigger);
+                                ctx.hideMenu();
+                                event.clearSelection();
+                            });
+                            clipboard.on('error', function(event) {
+                                console.error('Action:', event.action);
+                                console.error('Trigger:', event.trigger);
+                            });
+                        }
+                    }
+                ];
+
+            array = array.filter(obj => menu.some(item => item.className.indexOf(obj.className) !== -1));
+            array.forEach(obj => { obj.method(); });
+        },
         forbidMouseWheel(event) {
-            if (getElem(event.target, 'table-widget')) {
+            if (getParent(event.target, '.table-widget')) {
                 event.preventDefault();
             }
         },
         forbidContextmenu(event) {
             event.preventDefault();
+        },
+        hideContext(event) {
+            !getParent(event.target, '.contextmenu') && this.hideMenu();
         }
     },
     mounted() {
+        this.initContextmenuEvent();
+        document.addEventListener('mousedown', this.hideContext, false);
         document.addEventListener('mousewheel', this.forbidMouseWheel, false);
         document.addEventListener('DOMMouseScroll', this.forbidMouseWheel, false);
-        document.addEventListener('contextmenu', this.forbidContextmenu, false);
+        // document.addEventListener('contextmenu', this.forbidContextmenu, false);
         DragDrop.enable();
     },
     beforeDestroy() {
+        document.removeEventListener('mousedown', this.hideContext, false);
         document.removeEventListener('mousewheel', this.forbidMouseWheel, false);
         document.removeEventListener('DOMMouseScroll', this.forbidMouseWheel, false);
-        document.removeEventListener('contextmenu', this.forbidContextmenu, false);
+        // document.removeEventListener('contextmenu', this.forbidContextmenu, false);
+        // 删除 clipboard 事件
+        clipboard && clipboard.destroy();
         DragDrop.disable();
     },
 }
 </script>
 
 <style lang="less">
+@keyframes pop-appear {
+    0% {
+        opacity: 0;
+        transform: scale(.8) rotateX(-40deg)
+    }
+    50% {
+        opacity: 1
+    }
+    70% {
+        transform: scale(1.05) rotateX(0)
+    }
+    100% {
+        transform: scale(1) rotateX(0)
+    }
+}
+
 html,
 body,
 .jifeng2 {
@@ -90,7 +159,8 @@ ul {
     padding: 0;
 }
 
-input, select {
+input,
+select {
     outline: none;
 }
 

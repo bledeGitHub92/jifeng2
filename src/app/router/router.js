@@ -3,12 +3,14 @@ import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
 
-import Summary from '../pages/summary.vue';
-import Online from '../pages/online.vue';
+import summary from '../pages/summary.vue';
+import online from '../pages/online.vue';
+import players from '../pages/players.vue';
 
 const routes = [
-    { path: '/summary', component: Summary },
-    { path: '/online', component: Online },
+    { path: '/summary', component: summary },
+    { path: '/online', component: online },
+    { path: '/players', component: players },
 ]
 
 const router = new VueRouter({

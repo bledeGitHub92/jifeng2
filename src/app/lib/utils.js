@@ -22,19 +22,36 @@ export function getDisplay(dom) {
     return getComputedStyle(dom).display === 'none' && (!dom.getClientRects().length || !dom.getBoundingClientRect().width);
 }
 
-export function getElem(elem, className) {
-    while (elem) {
-        if (!elem.className || elem.className.indexOf(className) === -1) {
-            elem = elem.parentNode;
-        } else {
-            break;
-        }
-    }
-    return elem = typeof elem === 'object' ? elem : null;
+export function getParent(elem, selector) {
+    var methodName = selector[0] === '.' ? 'searchByClass' : 'searchByTag',
+        methods = {
+            searchByTag(elem, tagName) {
+                while (elem) {
+                    if (elem.nodeName.toLowerCase() === tagName) {
+                        return elem;
+                    } else {
+                        elem = elem.parentNode;
+                    }
+                }
+            },
+            searchByClass(elem, className) {
+                className = className.slice(1);
+                while (elem) {
+                    if (elem.className && elem.className.indexOf(className) !== -1) {
+                        return elem;
+                    } else {
+                        elem = elem.parentNode;
+                    }
+                }
+            }
+        };
+
+    elem = methods[methodName](elem, selector);
+    return typeof elem === 'object' ? elem : null;
 }
 
 // widget 层叠计数器
-export var stackCounter = (function() {
+export var stackCounter = (function () {
     var counter = 0;
 
     return {
