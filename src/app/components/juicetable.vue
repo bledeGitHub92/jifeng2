@@ -54,7 +54,7 @@ import list from './role.json';
 import { mapState, mapMutations, mapActions } from 'vuex';
 
 export default {
-    name: 'juice-table',
+    name: 'JuiceTable',
     data() {
         return {
             // table

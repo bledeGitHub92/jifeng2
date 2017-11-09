@@ -1,8 +1,8 @@
 export default [
     {
-        name: 'Data Menu',
+        name: '统 计',
         lists: [
-            { name: 'Summary', url: '/summary', icon: 'am-icon-pie-chart' },
+            { name: '实时概况', url: '/summary', icon: 'am-icon-pie-chart' },
             { name: 'Online', url: '/online', icon: 'am-icon-area-chart' },
             { name: 'Charts', url: '/charts', icon: 'am-icon-search' }
         ]
@@ -11,8 +11,6 @@ export default [
         name: '角 色 操 作',
         lists: [
             { name: '玩家', url: '/players', icon: 'am-icon-pie-chart' },
-            { name: 'Online', url: '/online', icon: 'am-icon-area-chart' },
-            { name: 'Charts', url: '/charts', icon: 'am-icon-search' }
         ]
     },
     {

@@ -10,7 +10,7 @@
 
 <script>
 export default {
-    name: 'operate-player',
+    name: 'OperatePlayer',
 
 }
 </script>

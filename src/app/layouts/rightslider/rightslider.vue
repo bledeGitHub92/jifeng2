@@ -9,7 +9,7 @@
 import { mapState } from 'vuex';
 
 export default {
-    name: 'right-slider',
+    name: 'RightSlider',
     computed: {
         ...mapState([
             'contentBlockMarginLeft'

@@ -15,7 +15,7 @@ import operate from './operate';
 import query from './query';
 
 export default {
-    name: 'contextmenu',
+    name: 'ContextMenu',
     data() {
         return {
             methods: {
@@ -38,7 +38,8 @@ export default {
     },
     methods: {
         ...mapMutations([
-            'changeBackdrop', 'hideMenu'
+            'changeBackdrop', 'hideMenu',
+            'changeEventDialog'
         ]),
         forbidMenu(event) {
             event.preventDefault();
@@ -47,11 +48,12 @@ export default {
             var target = event.target,
                 methods = this.methods,
                 methodName = target.className,
-                method = null;
+                getDialogName = null;
 
-            if (method = methods[methodName]) {
+            if (getDialogName = methods[methodName]) {
                 this.hideMenu();
                 this.changeBackdrop('show');
+                this.changeEventDialog(getDialogName());
             }
         }
     },

@@ -1,15 +1,17 @@
 <template>
-    <div class="query-detail">
+    <div class="juice-content">
         <slot></slot>
     </div>
 </template>
 
 <script>
 export default {
-    name: 'QueryDetail'
+    name: 'JuiceContent'
 }
 </script>
 
 <style lang="less" scoped>
-
+.juice-content {
+    padding: 0 30px;
+}
 </style>

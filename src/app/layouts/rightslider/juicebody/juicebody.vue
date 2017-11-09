@@ -3,8 +3,8 @@
         <div class="title am-g">
             <div class="menuname am-u-sm-8 am-u-md-9 am-u-lg-3 am-vertical-align">
                 <div class="am-vertical-align-middle">
-                    <span class="am-icon-paper-plane"></span>
-                    <h2>SUMMARY</h2>
+                    <span class="am-icon-location-arrow"></span>
+                    <h2>实时概况</h2>
                 </div>
             </div>
             <div class="gretting am-u-lg-7 am-hide-md-down">
@@ -18,7 +18,7 @@
             <div class="widget am-u-sm-4 am-u-md-3 am-u-lg-2">
                 <div class="am-vertical-align">
                     <div class="am-vertical-align-middle">
-                        Widget
+                        <button class="am-btn am-btn-primary am-icon-filter" style="width:100%;"> 筛选</button>
                     </div>
                 </div>
             </div>
@@ -26,16 +26,13 @@
         <div class="breadcrumb am-vertical-align">
             <ul class="am-vertical-align-middle">
                 <li>
-                    <span class="am-icon-home"></span>
+                    <span class="am-icon-location-arrow"></span>
                 </li>
+                <li>统计</li>
                 <li>
                     <span class="am-icon-angle-right"></span>
                 </li>
-                <li>UI Element</li>
-                <li>
-                    <span class="am-icon-angle-right"></span>
-                </li>
-                <li>Element</li>
+                <li>实时概况</li>
             </ul>
         </div>
         <!-- juice-panel  -->
@@ -53,7 +50,7 @@ import { mapState, mapMutations } from 'vuex';
 import { stackCounter } from '../../../lib/utils';
 
 export default {
-    name: 'juice-body',
+    name: 'JuiceBody',
     data() {
         return {
             // widget 列表
@@ -79,6 +76,7 @@ export default {
         ...mapMutations([
             'toggleWidget', 'clearWidgetList'
         ]),
+        // TODO: 按 esc 关闭 evet-dialog
         documentKeydownListener(event) {
             popupOfShortcutKey.call(this, event);
             this.clearWidgetList(event.keyCode);
@@ -175,14 +173,15 @@ function initWidgetStack(widget, counter) {
                 font-size: 0;
 
                 span:first-child {
-                    margin-right: .6rem;
-                    font-size: 2rem;
+                    margin-right: 10px;
+                    font-size: 18px;
                 }
 
                 h2 {
                     margin: 0;
                     display: inline-block;
-                    font-size: 2rem;
+                    font-size: 18px;
+                    font-weight: normal;
                 }
             }
         }
@@ -230,10 +229,19 @@ function initWidgetStack(widget, counter) {
 
             &>div {
                 height: 60px;
+                width: 100%;
                 display: inline-block;
 
                 &>div {
-                    // font-size: 0;
+                     // font-size: 0;
+                    width: 100%;
+                    
+                    button {
+                        width: 100%;
+                        border-radius: 3px;
+                        font-size: 14px;
+                        padding: 10px;
+                    }
                 }
             }
         }

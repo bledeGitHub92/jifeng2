@@ -6,9 +6,10 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
+import { getParent } from '../lib/utils';
 
 export default {
-    name: 'backdrop',
+    name: 'BackDrop',
     computed: {
         ...mapState(['backdropState'])
     },
@@ -16,8 +17,11 @@ export default {
         ...mapMutations([
             'changeBackdrop'
         ]),
-        hideBackdrop() {
-            this.changeBackdrop('hide');
+        hideBackdrop(event) {
+            var target = event.target;
+            if (!getParent(target, '.event-dialog')) {
+                this.changeBackdrop('hide');
+            }
         }
     }
 }

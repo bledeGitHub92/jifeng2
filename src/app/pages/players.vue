@@ -1,18 +1,18 @@
 <template>
-    <juice-panel v-on:toolbar="getIndex" :title="title" :act-btn="actBtn">
+    <juice-panel @toolbar="getIndex" :title="title" :act-btn="actBtn">
         <player-list></player-list>
     </juice-panel>
 </template>
 
 <script>
-import juicePanel from '../components/juicepanel.vue';
-import playerList from '../components/playerlist.vue';
+import JuicePanel from '../components/juicepanel.vue';
+import PlayerList from '../components/playerlist.vue';
 import { mapMutations } from 'vuex';
 
 export default {
     name: 'players',
     components: {
-        juicePanel, playerList
+        JuicePanel, PlayerList
     },
     data() {
         return {

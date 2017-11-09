@@ -44,7 +44,7 @@ import { showTip, hideTip } from '../../lib/tooltip';
 var animate = new Animate();
 
 export default {
-    name: 'sidenav',
+    name: 'SideNav',
     data() {
         return {
             folder: null,

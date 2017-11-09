@@ -7,27 +7,42 @@
         <div class="event-dialog-body">
             <div class="target am-icon-user"> 龙傲天</div>
             <hr>
-            <operate-player>
-                <send-mail></send-mail>
+            <operate-player v-if="operateDialogList.indexOf(enabledEventDialog)!==-1">
+                <keep-alive>
+                    <component :is="enabledEventDialog"></component>
+                </keep-alive>   
             </operate-player>
-            <!-- <query-detail>
-
-                </query-detail> -->
+            <query-detail v-if="queryDialogList.indexOf(enabledEventDialog)!==-1">
+                <!-- <component :is="enabledEventDialog"></component> -->
+            </query-detail>
         </div>
     </div>
 </template>
 
 <script>
-import sendMail from './operate/sendmail.vue';
-import operatePlayer from './operate/operateplayer.vue';
-import queryDetail from './query/querydetail.vue';
-
+import OperatePlayer from './operate/operateplayer.vue';
+import SendMail from './operate/sendmail.vue';
+import QueryDetail from './query/querydetail.vue';
+import QueryItem from './query/queryItem.vue';
+import { mapState } from 'vuex';
 
 export default {
-    name: 'event-dialog',
+    name: 'EventDialog',
     components: {
-        operatePlayer, queryDetail,
-        sendMail
+        OperatePlayer, SendMail,
+        QueryDetail, QueryItem
+    },
+    data() {
+        return {
+            currentView: 'sendMail',
+            operateDialogList: ['sendMail'],
+            queryDialogList: ['queryItem']
+        }
+    },
+    computed: {
+        ...mapState([
+            'enabledEventDialog'
+        ]),
     }
 }
 </script>

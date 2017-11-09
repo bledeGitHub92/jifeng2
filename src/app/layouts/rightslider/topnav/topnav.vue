@@ -36,7 +36,7 @@
 import { mapState, mapMutations } from 'vuex';
 
 export default {
-    name: 'topnav',
+    name: 'TopNav',
     data() {
         return {
             calendar: this.getDate()

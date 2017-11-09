@@ -17,7 +17,7 @@ import { getParent } from '../lib/utils';
 import { mapState, mapMutations } from 'vuex';
 
 export default {
-    name: 'player-list',
+    name: 'PlayerList',
     data() {
         return {
         }

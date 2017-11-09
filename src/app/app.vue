@@ -5,9 +5,6 @@
             <top-nav slot="topnav"></top-nav>
             <juice-body slot="juice-body"></juice-body>
         </right-slider>
-        <back-drop>
-            <event-dialog></event-dialog>
-        </back-drop>
         <modal-widget v-for="widget of widgetList" :key="widget.title" :msg="widget">
             <div slot="search">
                 <form action="">
@@ -18,21 +15,24 @@
             </div>
             <juice-table slot="玩家"></juice-table>
         </modal-widget>
+        <back-drop>
+            <event-dialog></event-dialog>
+        </back-drop>
         <context-menu></context-menu>
     </div>
 </template>
 
 <script>
-import sideNav from './components/sidenav/sidenav.vue';
-import rightSlider from './components/rightslider/rightslider.vue';
-import juiceBody from './components/rightslider/juicebody/juicebody.vue';
-import topNav from './components/rightslider/topnav/topnav.vue';
-import backDrop from './components/backdrop.vue';
-import eventDialog from './components/eventdialog/eventdialog.vue';
-import modalWidget from './components/modalwidget.vue';
-import juiceTable from './components/juicetable.vue';
-import juiceSelect from './components/juiceselect.vue';
-import contextMenu from './components/contextmenu/contextmenu.vue';
+import SideNav from './layouts/sidenav/sidenav.vue';
+import RightSlider from './layouts/rightslider/rightslider.vue';
+import TopNav from './layouts/rightslider/topnav/topnav.vue';
+import JuiceBody from './layouts/rightslider/juicebody/juicebody.vue';
+import ModalWidget from './components/modalwidget.vue';
+import JuiceTable from './components/juicetable.vue';
+import JuiceSelect from './components/juiceselect.vue';
+import ContextMenu from './components/contextmenu/contextmenu.vue';
+import BackDrop from './components/backdrop.vue';
+import EventDialog from './components/eventdialog/eventdialog.vue';
 import { mapState, mapMutations } from 'vuex';
 import DragDrop from './lib/dragDrop';
 import { getParent } from './lib/utils';
@@ -45,10 +45,10 @@ var clipboard = null;
 export default {
     name: 'app',
     components: {
-        rightSlider, sideNav, topNav,
-        juiceBody, backDrop, modalWidget,
-        juiceTable, juiceSelect, contextMenu,
-        eventDialog
+        SideNav, RightSlider, TopNav,
+        JuiceBody, ModalWidget, JuiceTable,
+        JuiceSelect, ContextMenu, BackDrop,
+        EventDialog
     },
     computed: {
         ...mapState([
@@ -151,7 +151,10 @@ body,
 }
 
 body {
-    background: url('./bg.jpg') repeat;
+    background: url('./bg.jpg') no-repeat top center fixed;
+    background-size: cover;
+    overflow-x: hidden;
+    font-family: "Segoe UI", "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", "微软雅黑", "宋体";
 }
 
 ul {

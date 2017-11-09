@@ -33,6 +33,8 @@ const store = new Vuex.Store({
                 ]
             },
         ],
+        // event-dialog
+        enabledEventDialog: '',
         // sidenav
         defaultMenuList,
         contentBlockMarginLeft: 260,
@@ -116,6 +118,11 @@ const store = new Vuex.Store({
         // 更新 copyValue
         updateCopyValue(state, value) {
             state.copyValue = value
+        },
+        // 改变 enabledEventDialog
+        changeEventDialog(state, dialogName) {
+            dialogName = typeof dialogName === 'string' ? dialogName : '';
+            state.enabledEventDialog = dialogName;
         }
     },
     actions: {

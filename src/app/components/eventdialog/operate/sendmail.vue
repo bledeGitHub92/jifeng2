@@ -14,8 +14,7 @@
 
 <script>
 export default {
-    name: 'send-mail',
-
+    name: 'SendMail',
 }
 </script>
 

@@ -1,5 +1,7 @@
 export default {
-    sendMail() { },
+    sendMail() {
+        return 'sendMail';
+    },
     bwList() { },
     addQuest() { },
     setQuest() { },

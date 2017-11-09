@@ -1,12 +1,10 @@
 <template>
-    <div class="query-detail">
-        <slot></slot>
-    </div>
+<div class="query-item"></div>
 </template>
 
 <script>
 export default {
-    name: 'QueryDetail'
+    name: 'QueryItem'
 }
 </script>
 

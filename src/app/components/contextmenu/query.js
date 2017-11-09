@@ -1,5 +1,7 @@
 export default {
-    queryItem() {},
+    queryItem() {
+        return 'queryItem';
+    },
     queryCounter() {},
     queryQuest() {},
     queryScene() {},

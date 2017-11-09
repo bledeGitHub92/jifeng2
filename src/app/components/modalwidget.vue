@@ -20,8 +20,16 @@
 import { mapState, mapMutations } from 'vuex';
 
 export default {
-    name: 'modal-widget',
-    props: ['msg'],
+    name: 'ModalWidget',
+    props: {
+        msg: {
+            type: Object,
+            required:true,
+            validator(value) {
+                return typeof value.title === 'string';
+            }
+        }
+    },
     computed: {
         ...mapState(['widgetList']),
     },
@@ -46,8 +54,7 @@ export default {
     left: 0px;
     top: 0px;
     min-width: 400px;
-    max-width: 400px;
-    // min-height: 400px;
+    max-width: 400px; // min-height: 400px;
     background-color: #fff;
     border: 1px solid #e5e5e5;
     border-radius: 6px;
@@ -85,9 +92,7 @@ export default {
             padding-bottom: 20px;
             border-bottom: 1px dashed #ddd;
             margin-bottom: 20px;
-        }
-
-        // .modal-content {
+        } // .modal-content {
         //     overflow: auto;
         // }
     }

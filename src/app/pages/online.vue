@@ -7,11 +7,13 @@
 </template>
 
 <script>
-import juicePanel from '../components/juicepanel.vue';
+import JuicePanel from '../components/juicepanel.vue';
 
 export default {
     name: 'online',
-    components: { juicePanel },
+    components: {
+        JuicePanel
+    },
 }
 </script>
 

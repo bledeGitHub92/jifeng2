@@ -10,7 +10,7 @@
 
 <script>
 export default {
-    name: 'juice-select'
+    name: 'JuiceSelect'
 }
 </script>
 

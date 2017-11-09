@@ -7,8 +7,6 @@
                         <h6 class="am-fl">{{title}}</h6>
                         <div class="tool am-fr">
                             <span @click="$emit('toolbar',index)" v-for="(btn,index) of actBtn" :key="btn.icon" :class="btn.icon" :title="btn.title"></span>
-                            <!-- <span class="am-icon-table"></span>
-                                <span class="am-icon-bar-chart"></span> -->
                         </div>
                     </div>
                 </div>
@@ -22,28 +20,34 @@
 
 <script>
 export default {
-    name: 'juice-panel',
+    name: 'JuicePanel',
     props: {
-        title: String,
-        actBtn: Array,
+        title: {
+            type: String,
+            required: true
+        },
+        actBtn: {
+            type: Array,
+            required: true
+        },
     }
 }
 </script>
 
 <style lang="less" scoped>
 .panel-wrapper {
-    padding: 0 30px;
     animation: pop-appear .3s cubic-bezier(.8, .02, .45, .91) forwards;
+    margin: 30px auto 0px;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
 
     .panel {
         background: rgb(255, 255, 255);
-        border-radius: .3rem;
+        border-radius: 3px;
 
         .panel-title {
             font-size: 0;
             height: 50px;
-            margin: 30px auto 0px;
-            border-bottom: 1px dotted rgb(221, 221, 221);
+            border-bottom: 1px dashed rgb(221, 221, 221);
             padding: 0 15px;
 
             &>div {
