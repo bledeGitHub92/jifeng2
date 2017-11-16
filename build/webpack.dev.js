@@ -5,7 +5,8 @@ var merge = require('webpack-merge');
 
 Object.keys(base.entry).forEach(function (name) {
     base.entry[name] = [
-        'webpack-hot-middleware/client?timeout=2000&reload=true'
+        'webpack-hot-middleware/client?timeout=2000&reload=true',
+        'babel-polyfill'
     ].concat(base.entry[name]);
 });
 

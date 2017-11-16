@@ -2,7 +2,7 @@ export default [
     {
         name: '统 计',
         lists: [
-            { name: '实时概况', url: '/summary', icon: 'am-icon-pie-chart' },
+            { name: '实时概况', url: '/summary', icon: 'am-icon-clock-o' },
             { name: 'Online', url: '/online', icon: 'am-icon-area-chart' },
             { name: 'Charts', url: '/charts', icon: 'am-icon-search' }
         ]

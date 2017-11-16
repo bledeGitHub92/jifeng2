@@ -1,11 +1,14 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import defaultMenuList from './sidenav/defaultMenuList';
+import io from 'socket.io-client';
 
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state: {
+        //socket
+        socket: io(),
         // contextmenu
         copyValue: '',
         menuLeft: 0,

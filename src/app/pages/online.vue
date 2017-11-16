@@ -1,18 +1,19 @@
 <template>
-    <juice-panel>
-        <div>
-            online
-        </div>
-    </juice-panel>
+    <juice-content>
+        <juice-panel>
+            <div>online</div>
+        </juice-panel>
+    </juice-content>
 </template>
 
 <script>
-import JuicePanel from '../components/juicepanel.vue';
+import JuiceContent from '../components/juicecontent.vue'
+import JuicePanel from '../components/juicepanel/juicepanel.vue';
 
 export default {
     name: 'online',
     components: {
-        JuicePanel
+        JuiceContent, JuicePanel
     },
 }
 </script>

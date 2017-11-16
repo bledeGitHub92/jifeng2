@@ -18,7 +18,7 @@
             <div class="widget am-u-sm-4 am-u-md-3 am-u-lg-2">
                 <div class="am-vertical-align">
                     <div class="am-vertical-align-middle">
-                        <button class="am-btn am-btn-primary am-icon-filter" style="width:100%;"> 筛选</button>
+                        <button class="am-btn am-btn-primary am-icon-filter" style="width:100%;"> 筛 选</button>
                     </div>
                 </div>
             </div>

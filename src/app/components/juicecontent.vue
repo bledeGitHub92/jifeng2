@@ -12,6 +12,6 @@ export default {
 
 <style lang="less" scoped>
 .juice-content {
-    padding: 0 30px;
+    padding: 0 25px;
 }
 </style>
