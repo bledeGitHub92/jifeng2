@@ -15,7 +15,7 @@
                                 <span>：</span>
                                 {{col.detail[0]}}
                             </span>
-                            <span :class="['realtime-month-on-month', col.data-col.detail[0]>0?'am-icon-level-up':'am-icon-level-down',col.data-col.detail[0]>0?'up':'down']">
+                            <span :class="['realtime-month-on-month', col.data-col.detail[0]>0?['am-icon-level-up', 'up']:['am-icon-level-down', 'down']]">
                                 {{Math.abs(((col.data-col.detail[0])/col.detail[0]*100).toFixed(2))}} %
                             </span>
                         </p>
@@ -25,7 +25,7 @@
                                 <span>：</span>
                                 {{col.detail[1]}}
                             </span>
-                            <span :class="['realtime-month-on-month', col.data-col.detail[1]>0?'am-icon-level-up':'am-icon-level-down',col.data-col.detail[1]>0?'up':'down']">
+                            <span :class="['realtime-month-on-month', col.data-col.detail[1]>0?['am-icon-level-up','up']:['am-icon-level-down','down']]">
                                 {{Math.abs(((col.data-col.detail[1])/col.detail[1]*100).toFixed(2))}} %
                             </span>
                         </p>
@@ -35,7 +35,7 @@
                                 <span>：</span>
                                 {{col.detail[2]}}
                             </span>
-                            <span :class="['realtime-month-on-month', col.data-col.detail[2]>0?'am-icon-level-up':'am-icon-level-down',col.data-col.detail[2]>0?'up':'down']">
+                            <span :class="['realtime-month-on-month', col.data-col.detail[2]>0?['am-icon-level-up','up']:['am-icon-level-down','down']]">
                                 {{Math.abs(((col.data-col.detail[2])/col.detail[2]*100).toFixed(2))}} %
                             </span>
                         </p>
@@ -123,20 +123,11 @@ export default {
         ...mapState(['socket'])
     },
     methods: {
-        showDetail(index) {
-            this.detailState.length = index;
-            this.detailState.splice(index, 1, true);
-        },
-        hideDetail(index) {
-            this.detailState.splice(index, 1, false);
-        }
-    },
-    mounted() {
-        ajax.get('/v2/realtime', 'realtime')
-            .then(data => {
-                var socket = this.socket;
-                this.statInfo = data;
-                socket.on('start delta', ({ delta }) => {
+        initStatInfo() {
+            var socket = this.socket;
+            socket.on('start delta', ({ realtime, delta }) => {
+                if (delta) {
+                    console.log('delta: ', delta);
                     this.statInfo.forEach(
                         (item, index) => {
                             // TODO: 数字增加动画
@@ -144,12 +135,28 @@ export default {
                             item.delta = delta[index];
                         }
                     );
-                });
-                socket.emit('start delta');
+                } else {
+                    console.log('realtime: ', realtime);
+                    this.statInfo = realtime;
+                }
             });
+            socket.emit('start delta');
+        },
+        showDetail(index) {
+            this.detailState.length = index;
+            this.detailState.splice(index, 1, true);
+        },
+        hideDetail(index) {
+            this.detailState.splice(index, 1, false);
+        },
+    },
+    mounted() {
+        this.initStatInfo();
     },
     beforeDestroy() {
-        this.socket.emit('end delta');
+        var socket = this.socket;
+        socket.off('start delta');
+        socket.emit('end delta');
     }
 }
 </script>

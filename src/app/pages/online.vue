@@ -8,7 +8,7 @@
 
 <script>
 import JuiceContent from '../components/juicecontent.vue'
-import JuicePanel from '../components/juicepanel/juicepanel.vue';
+import JuicePanel from '../components/juicepanel.vue';
 
 export default {
     name: 'online',

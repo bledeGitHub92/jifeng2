@@ -5,7 +5,6 @@
                 <slot name="tabs"></slot>
                 <div class="tool am-fr">
                     <a class="am-icon-angle-up am-icon-sm"></a>
-                    <!-- <span @click="$emit('toolbar',index)" v-for="(btn,index) of actBtn" :key="btn.icon" :class="btn.icon" :title="btn.title"></span> -->
                 </div>
             </div>
             <div class="panel-body">
@@ -18,12 +17,6 @@
 <script>
 export default {
     name: 'JuicePanel',
-    props: {
-        actBtn: {
-            type: Array,
-            required: true
-        },
-    }
 }
 </script>
 

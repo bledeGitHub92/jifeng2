@@ -20,10 +20,10 @@
 </template>
 
 <script>
-import OperatePlayer from './operate/operateplayer.vue';
-import SendMail from './operate/sendmail.vue';
-import QueryDetail from './query/querydetail.vue';
-import QueryItem from './query/queryItem.vue';
+import OperatePlayer from './eventdialog/operate/operateplayer.vue';
+import SendMail from './eventdialog/operate/sendmail.vue';
+import QueryDetail from './eventdialog/query/querydetail.vue';
+import QueryItem from './eventdialog/query/queryItem.vue';
 import { mapState } from 'vuex';
 
 export default {

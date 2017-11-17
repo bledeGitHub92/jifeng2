@@ -1,27 +1,23 @@
 <template>
     <h3 class="panel-tabs">
-        <a v-for="(text,index) of tabs" :key="index" :class="{active:activeIndex===index}" @click="toggleTab(index)">{{text}}</a>
+        <a v-for="(value,key) of tabs" :key="key" :class="{active:tabName===key}" @click="$emit('changeTab', key)">{{value}}</a>
     </h3>
 </template>
 
 <script>
 export default {
     name: 'PanelTab',
-    data() {
-        return {
-            activeIndex: 0
-        }
-    },
     props: {
         tabs: {
-            type: Array,
+            type: Object,
+            required: true
+        },
+        tabName: {
+            type: String,
             required: true
         }
     },
     methods: {
-        toggleTab(index) {
-            this.activeIndex = index;
-        }
     }
 }
 </script>

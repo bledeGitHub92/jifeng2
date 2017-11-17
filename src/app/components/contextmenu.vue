@@ -11,8 +11,8 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
-import operate from './operate';
-import query from './query';
+import operate from './contextmenu/operate';
+import query from './contextmenu/query';
 
 export default {
     name: 'ContextMenu',
