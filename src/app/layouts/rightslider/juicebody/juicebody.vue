@@ -18,7 +18,13 @@
             <div class="widget am-u-sm-4 am-u-md-3 am-u-lg-2">
                 <div class="am-vertical-align">
                     <div class="am-vertical-align-middle">
-                        <button class="am-btn am-btn-primary am-icon-filter" style="width:100%;"> 筛 选</button>
+                        <button @click="showFilter" class="am-btn am-btn-primary am-icon-filter" style="width:100%;"> 筛 选</button>
+                        <div v-show="filterDetailState" class="filter-checked">
+                            <p>
+                                <span class="cat">平 台</span>
+                                <span>安 卓</span>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -60,33 +66,50 @@ export default {
                 { title: '公告' },
                 { title: '图表' },
             ],
+            // filter detail
+            filterDetailState: false
         }
     },
     computed: {
         ...mapState(['widgetList'])
     },
     mounted() {
-        // 打开 widget 快捷键
+        // keydown 句柄
         document.addEventListener('keydown', this.documentKeydownListener, false);
+        // keyup 句柄
+        document.addEventListener('keyup', this.documentKeyupListener, false);
     },
     beforeDestroy() {
         document.removeEventListener('keydown', this.documentKeydownListener, false);
+        document.removeEventListener('keyup', this.documentKeyupListener, false);
     },
     methods: {
         ...mapMutations([
-            'toggleWidget', 'clearWidgetList'
+            'toggleWidget', 'clearWidgetList',
+            'changeBackdrop', 'changeEventDialog'
         ]),
+        documentKeyupListener({ keyCode }) {
+            hideFilterDetail.call(this);
+            function hideFilterDetail() {
+                if (keyCode === 192) this.filterDetailState = false;
+            }
+        },
         // TODO: 按 esc 关闭 evet-dialog
-        documentKeydownListener(event) {
-            popupOfShortcutKey.call(this, event);
+        documentKeydownListener({ keyCode, altKey }) {
+            popupOfShortcutKey.call(this);
+            showFilterDetail.call(this);
             this.clearWidgetList(event.keyCode);
 
-            function popupOfShortcutKey(event) {
-                var index = [49, 50, 51, 52].indexOf(event.keyCode),
+            function showFilterDetail() {
+                if (keyCode === 192) this.filterDetailState = true;
+            }
+
+            function popupOfShortcutKey() {
+                var index = [49, 50, 51, 52].indexOf(keyCode),
                     length = this.widgetList.length,
                     widget = null;
 
-                if (event.altKey && index !== -1) {
+                if (altKey && index !== -1) {
                     this.toggleWidget(this.widgets[index]);
                     this.$nextTick(() => {
                         widget = initWidgetPos(length, this.widgetList);
@@ -107,6 +130,10 @@ export default {
                 widget = initWidgetPos(length, this.widgetList);
                 if (widget) { initWidgetStack(widget, stackCounter.increase()); }
             });
+        },
+        showFilter() {
+            this.changeBackdrop('show');
+            this.changeEventDialog('pageFilter');
         },
     },
 }
@@ -233,14 +260,53 @@ function initWidgetStack(widget, counter) {
                 display: inline-block;
 
                 &>div {
-                     // font-size: 0;
                     width: 100%;
-                    
+
                     button {
                         width: 100%;
                         border-radius: 3px;
                         font-size: 14px;
                         padding: 10px;
+                    }
+                }
+
+                .am-vertical-align-middle {
+                    position: relative;
+                    top: 0;
+                    left: 0;
+
+                    .filter-checked {
+                        animation: pop-appear .3s cubic-bezier(.8, .02, .45, .91) forwards;
+                        position: absolute;
+                        top: 100%;
+                        right: 0;
+                        border-radius: 3px;
+                        color: #fff;
+                        font-size: 14px;
+                        width: 100%;
+                        background-color: rgba(0, 0, 0, .9);
+                        &::before {
+                            content: ' ';
+                            display: block;
+                            position: absolute;
+                            top: -8px;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            border-bottom: 8px solid rgba(0, 0, 0, .9);
+                            border-left: 8px solid transparent;
+                            border-right: 8px solid transparent;
+                        }
+                        p {
+                            margin: 0;
+                            span {
+                                float: left;
+                                width: 50%;
+                                padding: 20px 10px;
+                                text-align: center;
+                                white-space: nowrap;
+                                overflow: hidden;
+                            }
+                        }
                     }
                 }
             }

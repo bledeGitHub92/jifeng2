@@ -25,7 +25,7 @@
                         <span class="cert"></span>
                     </li>
                     <li class="am-show-md-down">icon</li>
-                    <li @click="toggleSite" class="toggle-aside am-icon-th-list"></li>
+                    <li class="toggle-aside am-icon-th-list"></li>
                 </ul>
             </div>
         </div>

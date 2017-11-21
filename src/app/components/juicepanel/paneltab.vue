@@ -41,13 +41,13 @@ export default {
         &:hover {
             border-bottom: none;
             color: #0e90d2;
-            background-image: linear-gradient(to bottom, #f3f3f3, #fff);
+            background-color: #fff;
         }
 
         &.active {
             color: #0e90d2;
             border-bottom: 3px solid #0e90d2;
-            background-image: linear-gradient(to bottom, #f3f3f3, #fff);
+            background-color: #fff;
         }
     }
 }

@@ -18,7 +18,7 @@ export default {
     name: 'ContextMenu',
     data() {
         return {
-            methods: {
+            fns: {
                 ...operate,
                 ...query
             }
@@ -46,11 +46,11 @@ export default {
         },
         fireEvent(event) {
             var target = event.target,
-                methods = this.methods,
+                fns = this.fns,
                 methodName = target.className,
                 getDialogName = null;
 
-            if (getDialogName = methods[methodName]) {
+            if (getDialogName = fns[methodName]) {
                 this.hideMenu();
                 this.changeBackdrop('show');
                 this.changeEventDialog(getDialogName());

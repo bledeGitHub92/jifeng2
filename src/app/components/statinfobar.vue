@@ -127,7 +127,6 @@ export default {
             var socket = this.socket;
             socket.on('start delta', ({ realtime, delta }) => {
                 if (delta) {
-                    console.log('delta: ', delta);
                     this.statInfo.forEach(
                         (item, index) => {
                             // TODO: 数字增加动画
@@ -136,7 +135,6 @@ export default {
                         }
                     );
                 } else {
-                    console.log('realtime: ', realtime);
                     this.statInfo = realtime;
                 }
             });

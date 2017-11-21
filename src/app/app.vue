@@ -1,5 +1,5 @@
 <template>
-    <div :style="position" class="jifeng2">
+    <div @selectstart="forbidSelect" class="jifeng2">
         <side-nav></side-nav>
         <right-slider>
             <top-nav slot="topnav"></top-nav>
@@ -52,12 +52,8 @@ export default {
     },
     computed: {
         ...mapState([
-            'siteTranslate', 'widgetList',
-            'menuList', 'copyValue'
+            'widgetList', 'menuList', 'copyValue'
         ]),
-        position() {
-            return { transform: `translate(${this.siteTranslate}px)` };
-        }
     },
     methods: {
         ...mapMutations([
@@ -105,6 +101,10 @@ export default {
         },
         hideContext(event) {
             !getParent(event.target, '.contextmenu') && this.hideMenu();
+        },
+        // 禁止选择文本
+        forbidSelect(event) {
+            event.preventDefault();
         }
     },
     mounted() {
@@ -148,6 +148,7 @@ html,
 body,
 .jifeng2 {
     height: 100%;
+    user-select: none;
 }
 
 body {
@@ -155,6 +156,11 @@ body {
     background-size: cover;
     overflow-x: hidden;
     font-family: "Segoe UI", "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", "微软雅黑", "宋体";
+
+    &.backdrop-on {
+        overflow: hidden;
+        padding-right: 17px;
+    }
 }
 
 ul {
@@ -165,10 +171,6 @@ ul {
 input,
 select {
     outline: none;
-}
-
-.jifeng2 {
-    transition: transform .2s;
 }
 
 .clearfix {

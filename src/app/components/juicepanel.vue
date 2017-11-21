@@ -4,7 +4,7 @@
             <div class="panel-title">
                 <slot name="tabs"></slot>
                 <div class="tool am-fr">
-                    <a class="am-icon-angle-up am-icon-sm"></a>
+                    <a @click="$emit('toggleChart')" :class="['am-icon-sm', chartState?'am-icon-angle-up':'am-icon-angle-down active']"></a>
                 </div>
             </div>
             <div class="panel-body">
@@ -17,6 +17,12 @@
 <script>
 export default {
     name: 'JuicePanel',
+    props: {
+        chartState: {
+            type: Boolean,
+            required:true
+        }
+    }
 }
 </script>
 
@@ -33,7 +39,7 @@ export default {
         .panel-title {
             height: 46px;
             border-bottom: 1px solid #e4e4e4;
-            background-image: linear-gradient(to bottom, #f7f7f7, #eaeaea);
+            background-color: #f7f7f7;
         }
 
         .tool {
@@ -48,7 +54,10 @@ export default {
                 cursor: pointer;
 
                 &:hover {
-                    background-image: linear-gradient(to bottom, #f3f3f3, #fff);
+                    background-color: #fff;
+                }
+                &.active {
+                    background-color: #fff;
                 }
             }
         }

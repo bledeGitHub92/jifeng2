@@ -1,4 +1,5 @@
 <template>
+    <!-- TODO: 位置记忆  -->
     <div class="modal-widget">
         <div class="modal-header">
             <span>{{msg.title}}</span>
@@ -57,7 +58,7 @@ export default {
     max-width: 400px; // min-height: 400px;
     background-color: #fff;
     border: 1px solid #e5e5e5;
-    border-radius: 6px;
+    border-radius: 3px;
     box-shadow: 6px 6px 2px -2px rgba(0, 0, 0, .4);
 
     .modal-header {

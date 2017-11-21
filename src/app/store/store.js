@@ -41,8 +41,6 @@ const store = new Vuex.Store({
         // sidenav
         defaultMenuList,
         contentBlockMarginLeft: 260,
-        // topnav
-        siteTranslate: 0,
         // backdrop
         backdropState: false,
         // modal-widget list
@@ -74,17 +72,27 @@ const store = new Vuex.Store({
             state.contentBlockMarginLeft = contentBlockMarginLeft === 260 ? 50 : 260;
         },
         // 切换页面主体
-        toggleSite(state) {
-            const { siteTranslate } = state;
-            state.siteTranslate = siteTranslate === -250 ? 0 : -250;
-        },
+        // toggleSite(state) {
+        //     const { siteTranslate } = state;
+        //     state.siteTranslate = siteTranslate === -250 ? 0 : -250;
+        // },
         // 改变背景层
         changeBackdrop(state, payload) {
             if (payload === 'show') {
                 state.backdropState = true;
+                var list = document.body.className.split(' ');
+                list.push('backdrop-on');
+                document.body.className = list.join(' ');
             }
             if (payload === 'hide') {
                 state.backdropState = false;
+                var list = document.body.className.split(' '),
+                    index = list.indexOf('backdrop-on');
+
+                if (index !== -1) {
+                    list.splice(index, 1);
+                    document.body.className = list.join(' ');
+                }
             }
         },
         // 切换 modal-widget
