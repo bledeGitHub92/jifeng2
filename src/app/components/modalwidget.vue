@@ -1,33 +1,31 @@
 <template>
-    <!-- TODO: 位置记忆  -->
     <div class="modal-widget">
         <div class="modal-header">
-            <span>{{msg.title}}</span>
+            <span>{{msg.alias}}</span>
             <span @click="closeWidget" class="am-icon-times" title="Esc"></span>
         </div>
         <div class="modal-body clearfix">
-            <div class="modal-search">
-                <slot name="search"></slot>
-            </div>
-            <div class="modal-content">
-                <slot :name="msg.title"></slot>
-            </div>
+            <component :is="'PlayerModal'"></component>
         </div>
         <div class="modal-footer"></div>
     </div>
 </template>
 
 <script>
+import PlayerModal from './playermodal.vue';
 import { mapState, mapMutations } from 'vuex';
 
 export default {
     name: 'ModalWidget',
+    components: {
+        PlayerModal
+    },
     props: {
         msg: {
             type: Object,
-            required:true,
+            required: true,
             validator(value) {
-                return typeof value.title === 'string';
+                return typeof value.alias === 'string';
             }
         }
     },
@@ -40,7 +38,7 @@ export default {
             var title = event.target.previousElementSibling.textContent;
 
             this.toggleWidget(this.widgetList.filter(
-                widget => widget.title === title
+                widget => widget.alias === title
             )[0]);
         }
     }
@@ -84,18 +82,6 @@ export default {
             cursor: pointer;
             float: right;
         }
-    }
-
-    .modal-body {
-        padding: 20px;
-
-        .modal-search {
-            padding-bottom: 20px;
-            border-bottom: 1px dashed #ddd;
-            margin-bottom: 20px;
-        } // .modal-content {
-        //     overflow: auto;
-        // }
     }
 }
 </style>

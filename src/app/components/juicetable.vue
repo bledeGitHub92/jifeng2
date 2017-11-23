@@ -2,33 +2,13 @@
     <div class="table-wrapper">
         <div class="table-utils clearfix">
             <!-- TODO: 导出按钮样式调整  -->
-            <input @keyup="tableFilter" type="text" placeholder="搜索..">
+            <input @mousedown.stop="hideMenu" v-model="keyword" type="text" placeholder="搜索">
             <span style="float:right;">csv</span>
             <span style="float:right;">excel</span>
         </div>
-        <table class="table-widget" @mousedown="selectRow" @contextmenu="showContext" @mousewheel="swipeTable" @DOMMouseScroll="swipeTable" :style="{'left':leftOfTable+'px'}">
+        <table class="table-widget" @mousedown.stop="selectRow" @contextmenu="showContext" @mousewheel="swipeTable" @DOMMouseScroll="swipeTable" :style="{'left':leftOfTable+'px'}">
             <tr>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
-                <th title="战力">战力</th>
+                <th v-for="i of 21" :key="i" title="战力">战力</th>
             </tr>
             <tr v-for="row of breakList[page]" :key="row.id" :class="{active:selectedPlayers.includes(row)}">
                 <td v-for="(col,key) of row" :key="key" :title="col">{{col}}</td>
@@ -37,7 +17,7 @@
                 <td colspan="21" style="text-align:center">没有相关记录</td>
             </tr>
         </table>
-        <div @click="jump" class="pagination am-btn-group am-btn-group-xs">
+        <div @mousedown.stop="hideMenu" @click="filpOver" class="pagination am-btn-group am-btn-group-xs">
             <!-- TODO: 分页方式 -->
             <span style="float:left;margin-right:10px;font-size:12px;color:#73879c;margin-top:5px;">
                 {{page+1}} / {{breakList.length}}
@@ -58,7 +38,7 @@ export default {
     data() {
         return {
             // table
-            list,
+            keyword: '',
             page: 0,
             maxRow: 5,
             leftOfTable: 0,
@@ -80,48 +60,54 @@ export default {
                 i += maxRow;
             }
             return partOfTable;
+        },
+        list() {
+            return list.filter(row => {
+                for (let n in row) {
+                    if ((row[n] + '').indexOf(this.keyword) !== -1) {
+                        return true;
+                    }
+                }
+            });
+        },
+        selectedNumber() {
+            return this.selectedPlayers.length;
         }
     },
     methods: {
         ...mapMutations([
-            'setMenuLocation', 'showMenu',
-            'updateCopyValue'
+            'setMenuLocation', 'showMenu', 'hideMenu',
+            'updateCopyValue', 'addPlayer',
+            'changeSelectedMode', 'changeSelectedMode',
         ]),
         ...mapActions(['togglePlayer']),
         // 选择行
-        selectRow(event) {
+        selectRow({ target, button }) {
+            this.hideMenu();
             // TODO: 取消邮件操作玩家列表
-            var target = event.target;
+            var target = target;
             // 点击表头无效
-            if (target.nodeName.toLowerCase() === 'th' || event.button !== 0) { return; }
+            if (target.nodeName.toLowerCase() === 'th' || (button !== 0 && button !== 2)) { return; }
+
             var tr = getParent(target, 'tr'),
                 table = getParent(tr, 'table'),
                 currList = this.breakList[this.page],
                 order = Array.from(table.children).indexOf(tr) - 1,
                 player = currList[order];
 
+            if (button === 0) {
                 this.togglePlayer(player);
-        },
-        // 筛选表格
-        tableFilter(event) {
-            var value;
-            if (event.keyCode === 13) {
-                value = event.target.value;
-                if (!value) {
-                    return this.list = list;
+            } else {
+                this.addPlayer(player);
+                if (this.selectedNumber > 1) {
+                    this.changeSelectedMode('multiple');
+                } else {
+                    this.changeSelectedMode('normal');
                 }
-                this.page = 0;
-                this.list = this.list.filter(row => {
-                    for (let n in row) {
-                        if ((row[n] + '').indexOf(value) !== -1) {
-                            return true;
-                        }
-                    }
-                });
             }
         },
-        // 下一页
-        jump(event) {
+        // 翻页
+        filpOver(event) {
             var method = event.target.className.indexOf('am-icon-angle-right') !== -1 ? 'next' : 'prev',
                 strategy = {
                     next: () => { this.page >= this.breakList.length - 1 ? this.page : this.page += 1; },

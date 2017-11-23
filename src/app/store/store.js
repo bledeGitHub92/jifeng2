@@ -7,6 +7,8 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state: {
+        // 单选 | 多选
+        selectedMode: 'normal',
         //socket
         socket: io(),
         // contextmenu
@@ -112,6 +114,7 @@ const store = new Vuex.Store({
         },
         // 添加玩家
         addPlayer(state, player) {
+            // 避免重复添加
             if (!state.selectedPlayers.includes(player)) {
                 state.selectedPlayers.push(player);
             }
@@ -134,6 +137,10 @@ const store = new Vuex.Store({
         changeEventDialog(state, dialogName) {
             dialogName = typeof dialogName === 'string' ? dialogName : '';
             state.enabledEventDialog = dialogName;
+        },
+        // 更新选择模式
+        changeSelectedMode(state, mode) {
+            state.selectedMode = mode;
         }
     },
     actions: {

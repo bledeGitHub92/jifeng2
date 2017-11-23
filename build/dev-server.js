@@ -13,7 +13,7 @@ app.use('/v2', router);
 // redirect
 app.use(require('connect-history-api-fallback')({
     rewrites: [
-        { from: /\/(summary|online|charts|dashboard|mail|form|table|time-line|players)/, to: '/app.html' },
+        { from: /\/(summary|report|dashboard|mail|form|table|time-line|player\/add)/, to: '/app.html' },
     ]
 }));
 
@@ -28,5 +28,5 @@ app.use(require("webpack-hot-middleware")(compiler));
 setSocket(io);
 
 http.listen(8888, () => {
-    console.log('Example app listenning on port 8888!\n');
+    console.log('jifeng2 listenning on port 8888!\n');
 });

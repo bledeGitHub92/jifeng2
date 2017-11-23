@@ -44,8 +44,8 @@
         <!-- juice-panel  -->
         <router-view></router-view>
         <div class="footer am-vertical-align">
-            <ul @click="popup" class="thumbnail-list am-vertical-align-middle am-btn-group">
-                <li v-for="widget of widgets" :title="widget.title" :class="{'active':widgetList.includes(widget)}" :key="widget.title" class="thumbnail-item am-icon-qq am-icon-sm am-btn"></li>
+            <ul @click="showWidget" class="thumbnail-list am-vertical-align-middle am-btn-group">
+                <li v-for="widget of widgets" :title="widget.alias" :class="{'active':widgetList.includes(widget)}" :key="widget.name" class="thumbnail-item am-icon-qq am-icon-sm am-btn"></li>
             </ul>
         </div>
     </div>
@@ -61,10 +61,10 @@ export default {
         return {
             // widget 列表
             widgets: [
-                { title: '玩家' },
-                { title: '邮件' },
-                { title: '公告' },
-                { title: '图表' },
+                { alias: '玩家', name: 'player', },
+                { alias: '邮件', name: 'mail', },
+                { alias: '公告', name: 'announcement', },
+                { alias: '图表', name: 'grpah', },
             ],
             // filter detail
             filterDetailState: false
@@ -98,7 +98,7 @@ export default {
         documentKeydownListener({ keyCode, altKey }) {
             popupOfShortcutKey.call(this);
             showFilterDetail.call(this);
-            this.clearWidgetList(event.keyCode);
+            this.clearWidgetList(keyCode);
 
             function showFilterDetail() {
                 if (keyCode === 192) this.filterDetailState = true;
@@ -118,13 +118,13 @@ export default {
                 }
             }
         },
-        popup(event) {
-            var title = event.target.title,
+        showWidget({ target }) {
+            var title = target.title,
                 length = this.widgetList.length,
                 widget = null;
 
             this.toggleWidget(this.widgets.filter(
-                widget => widget.title === title
+                widget => widget.alias === title
             )[0]);
             this.$nextTick(() => {
                 widget = initWidgetPos(length, this.widgetList);
@@ -142,10 +142,16 @@ export default {
 function initWidgetPos(length, list) {
     if (list.length > length) {
         length = list.length;
-        if (length > 1) {
-            var widgets = document.querySelectorAll('.modal-widget'),
-                prevElem = widgets[length - 2],
-                currElem = widgets[length - 1],
+
+        var widgets = document.querySelectorAll('.modal-widget'),
+            currElem = widgets[length - 1],
+            coord = localStorage.getItem(currElem.id);
+
+        if (coord) {
+            coord = JSON.parse(coord);
+            currElem.style.cssText = `top:${coord.top}px;left:${coord.left}px`;
+        } else if (length > 1) {
+            var prevElem = widgets[length - 2],
                 currTop = prevElem.offsetTop + 40,
                 currLeft = prevElem.offsetLeft + 20,
                 docHeight = Math.max(document.documentElement.scrollHeight, document.documentElement.clientHeight),

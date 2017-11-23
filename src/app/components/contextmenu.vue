@@ -3,7 +3,9 @@
         <li v-for="item of menuList" :key="item.text" :class="[{'am-icon-caret-right':!!item.detail}, ...item.className]">
             {{item.text}}
             <ul v-if="item.detail" class="submenu">
-                <li v-for="submenu of item.detail" :key="submenu.text" :class="submenu.className">{{submenu.text}}</li>
+                <li v-for="submenu of item.detail" :key="submenu.text" :class="submenu.className">
+                    <a :class="{'am-icon-bolt':multiple&&menuStyle(submenu.className)}">{{submenu.text}}</a>
+                </li>
             </ul>
         </li>
     </ul>
@@ -21,20 +23,23 @@ export default {
             fns: {
                 ...operate,
                 ...query
-            }
+            },
         }
     },
     computed: {
         ...mapState([
-            'menuLeft', 'menuTop',
-            'menuState', 'menuList'
+            'menuLeft', 'menuTop', 'menuState',
+            'menuList', 'selectedMode'
         ]),
         location() {
             return {
                 left: this.menuLeft + 'px',
                 top: this.menuTop + 'px'
             }
-        }
+        },
+        multiple() {
+            return this.selectedMode === 'multiple';
+        },
     },
     methods: {
         ...mapMutations([
@@ -44,19 +49,23 @@ export default {
         forbidMenu(event) {
             event.preventDefault();
         },
-        fireEvent(event) {
-            var target = event.target,
-                fns = this.fns,
-                methodName = target.className,
+        fireEvent({ target, button }) {
+            var fns = this.fns,
+                methodName = target.parentNode.className,
                 getDialogName = null;
 
-            if (getDialogName = fns[methodName]) {
-                this.hideMenu();
-                this.changeBackdrop('show');
-                this.changeEventDialog(getDialogName());
+            if (button === 0) {
+                if (getDialogName = fns[methodName]) {
+                    this.hideMenu();
+                    this.changeBackdrop('show');
+                    this.changeEventDialog(getDialogName());
+                }
             }
-        }
-    },
+        },
+        menuStyle(className) {
+            return ['sendMail', 'bwList', 'addQuest', 'setQuest'].includes(className)
+        },
+    }
 
 }
 </script>
@@ -86,6 +95,26 @@ export default {
         right: -136px;
         display: none;
         box-shadow: 4px 4px 2px -1px rgba(0, 0, 0, 0.4);
+
+        li {
+            padding: 0;
+            position: relative;
+            left: 0;
+            top: 0;
+
+            a {
+                display: inline-block;
+                width: 100%;
+                padding-left: 30px;
+                color: #333;
+                &::before {
+                    position: absolute;
+                    top: 50%;
+                    left: 15px;
+                    transform: translate(-50%, -50%);
+                }
+            }
+        }
     }
 
     &>li {
@@ -96,16 +125,15 @@ export default {
         top: 0;
         left: 0;
     }
-
+    &>li::before {
+        line-height: 24px;
+        margin-right: 10px;
+        float: right;
+    }
 
     li {
         &:hover {
             background-color: #e5e5e5;
-        }
-        &::before {
-            line-height: 24px;
-            margin-right: 10px;
-            float: right;
         }
         width: 100%;
         height: 24px;

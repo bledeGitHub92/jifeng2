@@ -1,7 +1,7 @@
 <template>
     <juice-content>
         <juice-panel>
-            <div>online</div>
+            <div>add</div>
         </juice-panel>
     </juice-content>
 </template>
@@ -11,7 +11,7 @@ import JuiceContent from '../components/juicecontent.vue'
 import JuicePanel from '../components/juicepanel.vue';
 
 export default {
-    name: 'online',
+    name: 'report',
     components: {
         JuiceContent, JuicePanel
     },

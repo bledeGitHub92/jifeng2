@@ -5,16 +5,7 @@
             <top-nav slot="topnav"></top-nav>
             <juice-body slot="juice-body"></juice-body>
         </right-slider>
-        <modal-widget v-for="widget of widgetList" :key="widget.title" :msg="widget">
-            <div slot="search">
-                <form action="">
-                    <juice-select></juice-select>
-                    <input type="text" size="12" placeholder="角色信息" />
-                    <button style="float:right" type="button">查询</button>
-                </form>
-            </div>
-            <juice-table slot="玩家"></juice-table>
-        </modal-widget>
+        <modal-widget v-for="widget of widgetList" :key="widget.title" :msg="widget" :id="'modal-'+widget.name"></modal-widget>
         <back-drop>
             <event-dialog></event-dialog>
         </back-drop>
@@ -28,8 +19,6 @@ import RightSlider from './layouts/rightslider/rightslider.vue';
 import TopNav from './layouts/rightslider/topnav/topnav.vue';
 import JuiceBody from './layouts/rightslider/juicebody/juicebody.vue';
 import ModalWidget from './components/modalwidget.vue';
-import JuiceTable from './components/juicetable.vue';
-import JuiceSelect from './components/juiceselect.vue';
 import ContextMenu from './components/contextmenu.vue';
 import BackDrop from './components/backdrop.vue';
 import EventDialog from './components/eventdialog.vue';
@@ -46,9 +35,8 @@ export default {
     name: 'app',
     components: {
         SideNav, RightSlider, TopNav,
-        JuiceBody, ModalWidget, JuiceTable,
-        JuiceSelect, ContextMenu, BackDrop,
-        EventDialog
+        JuiceBody, ModalWidget, ContextMenu,
+        BackDrop, EventDialog
     },
     computed: {
         ...mapState([

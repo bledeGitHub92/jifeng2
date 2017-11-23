@@ -8,24 +8,16 @@
             <keep-alive>
                 <component :is="enabledEventDialog"></component>
             </keep-alive>
-            <operate-player v-if="operateDialogList.indexOf(enabledEventDialog)!==-1">
-                <div class="target am-icon-user"> 龙傲天</div>
-                <hr>
-                <keep-alive>
-                    <component :is="enabledEventDialog"></component>
-                </keep-alive>
-            </operate-player>
             <query-detail v-if="queryDialogList.indexOf(enabledEventDialog)!==-1">
                 <div class="target am-icon-user"> 龙傲天</div>
                 <hr>
                 <component :is="enabledEventDialog"></component>
-            </query-detail>
+            </query-detail>  
         </div>
     </div>
 </template>
 
 <script>
-import OperatePlayer from './eventdialog/operate/operateplayer.vue';
 import SendMail from './eventdialog/operate/sendmail.vue';
 import QueryDetail from './eventdialog/query/querydetail.vue';
 import QueryItem from './eventdialog/query/queryItem.vue';
@@ -35,7 +27,7 @@ import { mapState } from 'vuex';
 export default {
     name: 'EventDialog',
     components: {
-        OperatePlayer, SendMail, QueryDetail,
+        SendMail, QueryDetail,
         QueryItem, PageFilter
     },
     data() {
@@ -44,16 +36,12 @@ export default {
             queryDialogList: ['queryItem']
         }
     },
-    watch: {
-        enabledEventDialog(value) {
-            console.log(value);
-        }
-    },
     computed: {
         ...mapState([
             'enabledEventDialog'
         ]),
     },
+
 }
 </script>
 

@@ -4,7 +4,8 @@ var DragDrop = function () {
     var dragging = null,
         diffX = 0, diffY = 0,
         elemWidth = 0,
-        elemHeight = 0;
+        elemHeight = 0,
+        left, top;
 
     function handleEvent(event) {
         var target = event.target,
@@ -39,12 +40,17 @@ var DragDrop = function () {
             case "mousemove":
                 if (dragging !== null) {
                     event.preventDefault();
+                    left = limit(event.clientX - diffX, 0, docWidth - elemWidth);
+                    top = limit(event.clientY - diffY, 0, docHeight - elemHeight);
                     // 指定位置
-                    dragging.style.left = limit(event.clientX - diffX, 0, docWidth - elemWidth) + "px";
-                    dragging.style.top = limit(event.clientY - diffY, 0, docHeight - elemHeight) + "px";
+                    dragging.style.left = left + 'px';
+                    dragging.style.top = top + 'px';
                 }
                 break;
             case "mouseup":
+                if (dragging) {
+                    localStorage.setItem(dragging.id, JSON.stringify({ left, top }));
+                }
                 dragging = null;
                 break;
         }

@@ -5,7 +5,7 @@
                 <button v-for="btn of btns" :class="['am-btn','am-radius',btn.value===currentView?'am-btn-primary':'am-btn.default']" type="button" :key="btn.value">{{btn.text}}</button>
             </div>
             <div class="filter-search am-fr">
-                <input type="text" placeholder="搜索">
+                <input v-model="keyword" ref="keyword" type="text" placeholder="搜索">
             </div>
         </div>
         <div class="filter-body">
@@ -25,16 +25,15 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
     name: 'PageFilter',
     data() {
         return {
+            keyword: '',
             currentView: 'platform',
-            btns: [
-                { text: '平台', value: 'platform' },
-                { text: '渠道', value: 'channel' },
-                { text: '区服', value: 'server' },
-            ],
+            backup: [],
             checked: [],
             platform: [
                 { text: '越狱' },
@@ -76,13 +75,25 @@ export default {
                 { text: '苹果4服' },
                 { text: '苹果5服' },
                 { text: '苹果6服' },
-            ]
+            ],
+            btns: [
+                { text: '平台', value: 'platform' },
+                { text: '渠道', value: 'channel' },
+                { text: '区服', value: 'server' },
+            ],
         }
     },
     computed: {
+        ...mapState(['backdropState']),
         currentList() {
-            return this[this.currentView];
-        },
+            this.backup = this[this.currentView];
+            return this.backup.filter(({ text }) => text.indexOf(this.keyword) !== -1);
+        }
+    },
+    watch: {
+        backdropState(state) {
+            state && this.$refs.keyword.focus();
+        }
     },
     methods: {
         toggleItem({ target }) {
@@ -105,6 +116,8 @@ export default {
                     break;
                 // 平台-渠道-区服
                 case 'btn':
+                    this.$refs.keyword.focus();
+                    this.keyword = '';
                     this.checked = [];
                     this.currentView = [
                         { text: '平台', id: 'platform' },
@@ -126,7 +139,10 @@ export default {
                     break;
             }
         },
-    }
+    },
+    mounted() {
+        this.$refs.keyword.focus();
+    },
 }
 </script>
 
@@ -146,9 +162,10 @@ export default {
 
         .filter-search {
             input {
-                padding-left: 10px;
+                padding: 2px 10px;
                 width: 100px;
-                height: 32px;
+                height: 28px;
+                margin-top: 2px;
                 font-size: 14px;
             }
         }
@@ -161,7 +178,15 @@ export default {
             margin: 0;
             padding: 6px 20px;
 
+            .all:active,
+            .invert:active {
+                top: 1px;
+            }
+
             li {
+                position: relative;
+                top: 0;
+                left: 0;
                 float: right;
                 cursor: pointer;
                 margin-left: 10px;
@@ -189,6 +214,7 @@ export default {
                 padding-right: 26px;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                white-space: nowrap;
                 cursor: pointer;
 
                 &::before {

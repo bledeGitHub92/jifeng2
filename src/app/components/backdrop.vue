@@ -37,5 +37,6 @@ export default {
     background-color: rgba(255, 255, 255, .7);
     text-align: center;
     z-index: 999999999;
+    overflow: auto;
 }
 </style>
