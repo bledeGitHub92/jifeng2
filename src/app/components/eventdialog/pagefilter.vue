@@ -10,22 +10,22 @@
         </div>
         <div class="filter-body">
             <ul class="filter-action clearfix">
-                <li class="invert">反选</li>
-                <li class="all">全选</li>
+                <li :class="['invert',{'disabled':isAll}]">反选</li>
+                <li :class="['all',{'active':isAll}]">全部</li>
             </ul>
             <ul class="option-list clearfix">
                 <li v-for="item of currentList" :class="checked.includes(item.text)?['checked','am-icon-check']:''" :title="item.text" :key="item.text">{{item.text}}</li>
             </ul>
         </div>
         <div class="filter-footer clearfix">
-            <button class="am-btn am-btn-primary am-radius confim">确定</button>
+            <button class="am-btn am-btn-primary am-radius confirm">确定</button>
             <button class="am-btn am-btn-default am-radius cancel">取消</button>
         </div>
     </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
 
 export default {
     name: 'PageFilter',
@@ -35,47 +35,6 @@ export default {
             currentView: 'platform',
             backup: [],
             checked: [],
-            platform: [
-                { text: '越狱' },
-                { text: '安卓' },
-                { text: '乐游' },
-                { text: 'IOS正版' },
-                { text: '大麦BT' },
-                { text: 'C游BT' },
-                { text: '新马' },
-                { text: '韩服' },
-                { text: '185sy' },
-            ],
-            channel: [
-                { text: '至趣' },
-                { text: '妖火' },
-                { text: '掌游' },
-                { text: '圈圈' },
-                { text: '墨仙' },
-                { text: '汉风' },
-                { text: '果盘' },
-                { text: '悦动' },
-            ],
-            server: [
-                { text: '越狱1服' },
-                { text: '越狱2服' },
-                { text: '越狱3服' },
-                { text: '越狱4服' },
-                { text: '越狱5服' },
-                { text: '越狱6服' },
-                { text: '安卓1服' },
-                { text: '安卓2服' },
-                { text: '安卓3服' },
-                { text: '安卓4服' },
-                { text: '安卓5服' },
-                { text: '安卓6服' },
-                { text: '苹果1服' },
-                { text: '苹果2服' },
-                { text: '苹果3服' },
-                { text: '苹果4服' },
-                { text: '苹果5服' },
-                { text: '苹果6服' },
-            ],
             btns: [
                 { text: '平台', value: 'platform' },
                 { text: '渠道', value: 'channel' },
@@ -84,10 +43,19 @@ export default {
         }
     },
     computed: {
-        ...mapState(['backdropState']),
+        ...mapState([
+            'platform', 'channel', 'server',
+            'backdropState', 'socket', 'tabName'
+        ]),
         currentList() {
             this.backup = this[this.currentView];
-            return this.backup.filter(({ text }) => text.indexOf(this.keyword) !== -1);
+            return this.backup.filter(({ text }) => text.toLowerCase().indexOf(this.keyword.toLowerCase()) !== -1);
+        },
+        isAll() {
+            if (this.checked.length === this[this.currentView].length) {
+                this.checked = [];
+            }
+            return this.checked.length === 0;
         }
     },
     watch: {
@@ -96,26 +64,30 @@ export default {
         }
     },
     methods: {
+        ...mapMutations(['changeBackdrop']),
+        ...mapActions(['socketEmit']),
         toggleItem({ target }) {
             var checked = this.checked,
                 text = target.textContent,
                 index = checked.indexOf(text),
                 isBtn = target.nodeName.toLowerCase() === 'button',
                 action = target.className,
-                cat;
+                type;
 
-            if (target.parentNode.className.indexOf('option-list') !== -1) cat = 'checked';
-            if (isBtn && ['平台', '渠道', '区服'].includes(text)) cat = 'btn';
-            if (['invert', 'all'].includes(action)) cat = 'invert';
+            if (target.parentNode.className.indexOf('option-list') !== -1) type = 'check';
+            if (isBtn && ['平台', '渠道', '区服'].includes(text)) type = 'type';
+            if (['invert', 'all'].includes(action)) type = 'invert';
+            if (action.indexOf('confirm') !== -1) type = 'confirm';
+            if (action.indexOf('cancel') !== -1) type = 'cancel';
 
-            switch (cat) {
+            switch (type) {
                 // 列表选择
-                case 'checked':
+                case 'check':
                     if (index !== -1) checked.splice(index, 1);
                     else checked.push(text);
                     break;
                 // 平台-渠道-区服
-                case 'btn':
+                case 'type':
                     this.$refs.keyword.focus();
                     this.keyword = '';
                     this.checked = [];
@@ -129,13 +101,23 @@ export default {
                 case 'invert':
                     var obj = {
                         all(list) {
-                            return list;
+                            return [];
                         },
                         invert(list) {
                             return list.filter(item => !checked.some(checked => checked === item));
                         }
                     };
                     this.checked = obj[action].call(this, this.currentList.map(item => item.text));
+                    break;
+                // 确定
+                case 'confirm':
+                    this.socket.emit('start delta', { checked: this.checked, type: this.currentView });
+                    this.socketEmit({ type: 'summary', timestamp: +new Date, request: { emitter: '实时概况', detail: '实时概况' } });
+                    this.changeBackdrop('hide');
+                    break;
+                // 取消
+                case 'cancel':
+                    this.changeBackdrop('hide');
                     break;
             }
         },
@@ -173,7 +155,7 @@ export default {
 
     .filter-body {
         .filter-action {
-            background-color: #f0f0f0;
+            background-color: #f7f7f7;
             border-bottom: 1px solid #ddd;
             margin: 0;
             padding: 6px 20px;
@@ -181,6 +163,21 @@ export default {
             .all:active,
             .invert:active {
                 top: 1px;
+            }
+            .all.active {
+                color: #0e90d2;
+                cursor: default;
+                &:active {
+                    top: 0;
+                }
+            }
+            .invert.disabled {
+                cursor: not-allowed;
+                color: #666;
+                text-decoration: line-through;
+                &:active {
+                    top: 0;
+                }
             }
 
             li {

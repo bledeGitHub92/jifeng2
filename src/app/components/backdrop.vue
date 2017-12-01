@@ -1,14 +1,18 @@
 <template>
     <div @click="hideBackdrop" v-show="backdropState" class="backdrop am-vertical-align">
-        <slot></slot>
+        <event-dialog></event-dialog>
     </div>
 </template>
 
 <script>
 import { mapState, mapMutations } from 'vuex';
 import { getParent } from '../lib/utils';
+import EventDialog from './eventdialog.vue';
 
 export default {
+    components: {
+        EventDialog
+    },
     name: 'BackDrop',
     computed: {
         ...mapState(['backdropState'])

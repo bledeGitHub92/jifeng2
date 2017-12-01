@@ -1,8 +1,8 @@
 <template>
     <juice-content>
         <stat-info-bar></stat-info-bar>
-        <juice-panel @toggleChart="toggleChart" :chartState="chartState">
-            <panel-tab slot="tabs" v-bind="panelTab" @changeTab="changeTab"></panel-tab>
+        <juice-panel @toggleChart="toggleChart" :chart-state="chartState">
+            <panel-tab slot="tabs" v-bind="panelTab" @showChart="showChart"></panel-tab>
             <dynamic-chart v-show="chartState" :tabName="panelTab.tabName"></dynamic-chart>
         </juice-panel>
     </juice-content>
@@ -30,14 +30,12 @@ export default {
                     newplayer: '新增玩家',
                     income: '收入金额'
                 },
-                tabName: 'online'
             },
             chartState: true
         }
     },
     methods: {
-        changeTab(name) {
-            this.panelTab.tabName = name;
+        showChart() {
             this.chartState = true;
         },
         toggleChart() {

@@ -5,6 +5,7 @@ module.exports = function (io, socket) {
         var timer;
 
         socket.on('start income', () => {
+            clearInterval(timer);
             socket.emit('start income', initData());
             timer = setInterval(() => {
                 socket.emit('start income', mock({

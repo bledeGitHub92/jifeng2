@@ -1,14 +1,9 @@
 <template>
     <div @selectstart="forbidSelect" class="jifeng2">
         <side-nav></side-nav>
-        <right-slider>
-            <top-nav slot="topnav"></top-nav>
-            <juice-body slot="juice-body"></juice-body>
-        </right-slider>
+        <right-slider></right-slider>
         <modal-widget v-for="widget of widgetList" :key="widget.title" :msg="widget" :id="'modal-'+widget.name"></modal-widget>
-        <back-drop>
-            <event-dialog></event-dialog>
-        </back-drop>
+        <back-drop></back-drop>
         <context-menu></context-menu>
     </div>
 </template>
@@ -16,12 +11,9 @@
 <script>
 import SideNav from './layouts/sidenav/sidenav.vue';
 import RightSlider from './layouts/rightslider/rightslider.vue';
-import TopNav from './layouts/rightslider/topnav/topnav.vue';
-import JuiceBody from './layouts/rightslider/juicebody/juicebody.vue';
 import ModalWidget from './components/modalwidget.vue';
 import ContextMenu from './components/contextmenu.vue';
 import BackDrop from './components/backdrop.vue';
-import EventDialog from './components/eventdialog.vue';
 import { mapState, mapMutations } from 'vuex';
 import DragDrop from './lib/dragDrop';
 import { getParent } from './lib/utils';
@@ -34,18 +26,17 @@ var clipboard = null;
 export default {
     name: 'app',
     components: {
-        SideNav, RightSlider, TopNav,
-        JuiceBody, ModalWidget, ContextMenu,
-        BackDrop, EventDialog
+        SideNav, RightSlider, ModalWidget,
+        ContextMenu, BackDrop
     },
     computed: {
         ...mapState([
-            'widgetList', 'menuList', 'copyValue'
+            'widgetList', 'menuList', 'copyValue', 'platform'
         ]),
     },
     methods: {
         ...mapMutations([
-            'changeBackdrop', 'hideMenu'
+            'hideMenu'
         ]),
         // 初始化 contextmenu 的功能
         initContextmenuEvent() {
@@ -79,9 +70,43 @@ export default {
             array = array.filter(obj => menu.some(item => item.className.indexOf(obj.className) !== -1));
             array.forEach(obj => { obj.method(); });
         },
-        forbidMouseWheel(event) {
-            if (getParent(event.target, '.table-widget')) {
+        mousewheelListener({ target, wheelDelta, detail }) {
+            var delta = wheelDelta || detail * -40;
+            // 阻止滑动表格冒泡
+            if (getParent(target, '.table-widget')) {
                 event.preventDefault();
+            }
+
+            // info-tips 自定义自定义滚动条
+            var tipsRef, tipsWrapper;
+            if (tipsRef = getParent(target, '.tips-dropdown-ref')) {
+                tipsWrapper = tipsRef.firstElementChild;
+                minTop = tipsRef.offsetHeight - tipsWrapper.offsetHeight;
+                prev = parseInt(tipsWrapper.style.top);
+                next = (prev || 0) + delta / 2;
+                if (minTop < 0) {
+                    setTop(tipsWrapper, next >= 0 ? 0 : next < minTop ? minTop : next);
+                } else {
+                    setTop(slideWrapper, next > 0 ? 0 : next);
+                }
+
+            }
+
+            // juice-content 自定义滚动条
+            var slideWrapper, juiceContent, minTop, prev, next;
+            if (juiceContent = getParent(target, '.juice-content')) {
+                slideWrapper = juiceContent.firstElementChild;
+                minTop = juiceContent.offsetHeight - slideWrapper.offsetHeight;
+                prev = parseInt(slideWrapper.style.top);
+                next = (prev || 0) + delta / 2;
+                if (minTop < 0) {
+                    setTop(slideWrapper, next >= 0 ? 0 : next < minTop ? minTop : next);
+                } else if (prev < 0 && delta > 0) {
+                    setTop(slideWrapper, next > 0 ? 0 : next);
+                }
+            }
+            function setTop(elem, top) {
+                elem.style.top = top + 'px';
             }
         },
         forbidContextmenu(event) {
@@ -98,16 +123,16 @@ export default {
     mounted() {
         this.initContextmenuEvent();
         document.addEventListener('mousedown', this.hideContext, false);
-        document.addEventListener('mousewheel', this.forbidMouseWheel, false);
-        document.addEventListener('DOMMouseScroll', this.forbidMouseWheel, false);
-        // document.addEventListener('contextmenu', this.forbidContextmenu, false);
+        document.addEventListener('mousewheel', this.mousewheelListener, false);
+        document.addEventListener('DOMMouseScroll', this.mousewheelListener, false);
+        document.addEventListener('contextmenu', this.forbidContextmenu, false);
         DragDrop.enable();
     },
     beforeDestroy() {
         document.removeEventListener('mousedown', this.hideContext, false);
-        document.removeEventListener('mousewheel', this.forbidMouseWheel, false);
-        document.removeEventListener('DOMMouseScroll', this.forbidMouseWheel, false);
-        // document.removeEventListener('contextmenu', this.forbidContextmenu, false);
+        document.removeEventListener('mousewheel', this.mousewheelListener, false);
+        document.removeEventListener('DOMMouseScroll', this.mousewheelListener, false);
+        document.removeEventListener('contextmenu', this.forbidContextmenu, false);
         // 删除 clipboard 事件
         clipboard && clipboard.destroy();
         DragDrop.disable();
@@ -142,13 +167,7 @@ body,
 body {
     background: url('./bg.jpg') no-repeat top center fixed;
     background-size: cover;
-    overflow-x: hidden;
-    font-family: "Segoe UI", "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", "微软雅黑", "宋体";
-
-    &.backdrop-on {
-        overflow: hidden;
-        padding-right: 17px;
-    }
+    font-family: "Segoe UI", "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", "微软雅黑", "宋体"; // overflow: hidden;
 }
 
 ul {
@@ -197,5 +216,16 @@ select {
     opacity .35s;
     font-size: 13px;
     pointer-events: none;
+}
+
+// 初始化页面的 loading
+.loading {
+    background-color: #fff;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 </style>

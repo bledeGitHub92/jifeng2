@@ -5,6 +5,7 @@ module.exports = function (io, socket) {
         var timer;
 
         socket.on('start online', () => {
+            clearInterval(timer);
             socket.emit('start online', initData());
             timer = setInterval(() => {
                 socket.emit('start online', mock({

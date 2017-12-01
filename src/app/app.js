@@ -1,16 +1,21 @@
 import Vue from 'vue';
 import app from './app.vue';
-import store from './store/store';
+import initStore from './store/store';
 import router from './router/router';
 import { sync } from 'vuex-router-sync';
 
-sync(store, router);
+window.addEventListener('load', () => {
+    initStore.then(store => {
+        document.body.removeChild(document.querySelector('.loading'));
+        sync(store, router);
 
-const boostrap = new Vue({
-    el: 'app',
-    store,
-    router,
-    components: {
-        app
-    }
-});
+        new Vue({
+            el: 'app',
+            store,
+            router,
+            components: {
+                app
+            }
+        });
+    });
+}, false);

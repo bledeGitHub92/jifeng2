@@ -29,7 +29,7 @@ export default {
 <style lang="less" scoped>
 .panel-wrapper {
     animation: pop-appear .3s cubic-bezier(.8, .02, .45, .91) forwards;
-    margin: 30px 5px 0px;
+    margin: 30px 5px 0;
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
 
     .panel {

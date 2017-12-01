@@ -1,16 +1,13 @@
 <template>
     <div id="dynamic-chart">
-        <chart-loading v-show="loadingState"></chart-loading>
+        <chart-loading v-show="graphLoading"></chart-loading>
     </div>
 </template>
 
 <script>
-import G2, { Chart } from 'g2';
-import { mapState } from 'vuex';
-import ajax from '../lib/ajax';
+import { mapState, mapMutations, mapActions } from 'vuex';
 import ChartLoading from '../components/chart/chartloading.vue';
-
-G2.track(false);
+import Request from '../lib/Request';
 
 export default {
     name: 'DynamicChart',
@@ -19,103 +16,59 @@ export default {
     },
     data() {
         return {
-            chart: null,
-            loadingState: false,
-            loadingTimer: 0
-        }
-    },
-    props: {
-        tabName: {
-            type: String,
-            required: true
+            loadingTimer: 0,
         }
     },
     computed: {
-        ...mapState(['socket'])
+        ...mapState(['socket', 'tabName', 'chart', 'graphLoading', 'timestamp'])
     },
     watch: {
         tabName(fresh, stale) {
-            var { alias, field } = this.getChart(fresh);
             this.socket.emit(`end ${stale}`);
-            this.chart.destroy();
-            this.initGraph(alias, field);
+            this.setListener();
         }
     },
     methods: {
-        initGraph(alias, field) {
-            var chart = drawGraph(this, alias),
-                timestamp = +new Date,
+        ...mapMutations(['hideGraphLoading', 'refreshChart']),
+        ...mapActions(['socketEmit']),
+        setListener() {
+            var socket = this.socket,
                 tabName = this.tabName,
-                socket = this.socket,
+                request = new Request({ emitter: '实时概况', detail: tabName }),
                 data = [];
 
             clearTimeout(this.loadingTimer);
-            // open loading
-            this.loadingState = true;
 
             socket.off(`start ${tabName}`);
             socket.on(`start ${tabName}`, result => {
-                data.push(...result[field]);
+                var chart = this.chart,
+                    list = result[tabName],
+                    rest = 1000 - (+new Date() - this.timestamp);
 
-                if (!this.loadingState) {
-                    chart.changeData(data);
+                if (list.length === 1) {
+                    data.push(...result[tabName])
                 } else {
-                    var rest = 1000 - (+new Date - timestamp);
-                    if (rest > 0) {
-                        this.loadingTimer = setTimeout(() => {
-                            // close loading
-                            this.loadingState = false;
-                            chart.changeData(data);
-                        }, rest);
-                    } else {
+                    setTimeout(() => {
+                        request.success();
+                    }, 1000);
+                    data = list;
+                }
+
+                if (rest > 0) {
+                    this.loadingTimer = setTimeout(() => {
+                        // 隐藏 graph loading
+                        this.hideGraphLoading();
                         chart.changeData(data);
-                    }
+                    }, rest);
+                } else {
+                    chart.changeData(data);
                 }
             });
-            socket.emit(`start ${tabName}`);
-
-            function drawGraph(ctx, alias) {
-                var data = [], chart;
-                ctx.chart = chart = new Chart({
-                    id: 'dynamic-chart',
-                    forceFit: true,
-                    height: 450
-                });
-
-                chart.source(data, {
-                    time: {
-                        alias: '时间',
-                        type: 'time',
-                        tickCount: 6,
-                        mask: 'yyyy-mm-dd hh:MM:ss'
-                    },
-                    amount: {
-                        alias: alias,
-                        type: 'linear'
-                    },
-                });
-
-                chart.line().position('time*amount').size(2);
-
-                chart.render();
-
-                return chart;
-            }
+            this.socketEmit({ type: 'summary', timestamp: +new Date, request });
         },
-        getChart(chartName) {
-            var fns = {
-                online: { alias: '玩家', field: 'online' },
-                device: { alias: '设备', field: 'device' },
-                newplayer: { alias: '玩家', field: 'newplayer' },
-                income: { alias: '收入', field: 'income' },
-            };
-
-            return fns[chartName];
-        }
     },
     mounted() {
-        var { alias, field } = this.getChart(this.tabName);
-        this.initGraph(alias, field);
+        this.setListener();
     },
     beforeDestroy() {
         var socket = this.socket;

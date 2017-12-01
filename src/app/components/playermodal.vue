@@ -5,7 +5,7 @@
                 <form action="">
                     <juice-select></juice-select>
                     <input type="text" size="12" placeholder="角色信息" />
-                    <button style="float:right" type="button">查询</button>
+                    <button class="am-fr" type="button">查询</button>
                 </form>
             </div>
         </div>

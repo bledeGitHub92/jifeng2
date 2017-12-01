@@ -49,22 +49,22 @@ export default {
 <style lang="less" scoped>
 .modal-widget {
     animation: pop-appear .3s cubic-bezier(.8, .02, .45, .91) forwards;
-    position: absolute;
+    position: fixed;
     left: 0px;
     top: 0px;
     min-width: 400px;
     max-width: 400px; // min-height: 400px;
     background-color: #fff;
-    border: 1px solid #e5e5e5;
+    border: 1px solid #ddd;
     border-radius: 3px;
-    box-shadow: 6px 6px 2px -2px rgba(0, 0, 0, .4);
+    box-shadow: 6px 6px 2px -2px rgba(14,144,210, .4);
 
     .modal-header {
         background-color: #f7f7f7;
         user-select: none;
         height: 40px;
         line-height: 20px;
-        border-bottom: 1px solid #e5e5e5;
+        border-bottom: 1px solid #ddd;
         padding: 10px 15px;
         cursor: all-scroll;
 

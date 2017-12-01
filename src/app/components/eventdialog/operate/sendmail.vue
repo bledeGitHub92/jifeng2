@@ -1,20 +1,22 @@
 <template>
-    <form name="sendmail" action="#">
+    <div class="sendmail">
         <selected-player></selected-player>
-        <hr>
-        <p>
-            <input type="text" placeholder="邮件类型">
-        </p>
-        <p>
-            <input type="text" placeholder="邮件标题">
-        </p>
-        <p>
-            <input type="text" placeholder="邮件内容">
-        </p>
-        <p class="clearfix">
+        <form name="sendmail" action="#">
+            <p>
+                <input class="am-radius" type="text" placeholder="邮件类型">
+            </p>
+            <p>
+                <input class="am-radius" type="text" placeholder="邮件标题">
+            </p>
+            <p>
+                <input class="am-radius" type="text" placeholder="邮件内容">
+            </p>
+        </form>
+        <div class="sendmail-footer clearfix">
             <button class="am-btn am-radius am-btn-primary am-fr" type="button">确认</button>
-        </p>
-    </form>
+            <button class="am-btn am-radius am-btn-default am-fr" type="button">取消</button>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -29,9 +31,18 @@ export default {
 </script>
 
 <style lang="less" scoped>
-form {
-    padding: 20px;
-    padding-bottom: 0;
+form[name="sendmail"] {
+    padding: 0 20px;
+}
+
+.sendmail-footer {
+    padding: 10px 20px;
+    background-color: #f7f7f7;
+    border-top: 1px solid #ddd;
+    button {
+        font-size: 14px;
+        margin-left: 10px;
+    }
 }
 
 p {
@@ -44,10 +55,14 @@ label {
 }
 
 input {
-    border: 1px solid #ddd;
+    border: 1px solid #bbb;
     width: 100%;
     padding: 10px;
     padding-left: 38px;
     padding-right: 50px;
+
+    &:focus {
+        border-color: #0e90d2;
+    }
 }
 </style>

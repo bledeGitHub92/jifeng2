@@ -75,7 +75,7 @@ router.route('/online')
             past = +new Date(now - 600000),
             times = (function () {
                 var ret = [];
-                for (; past <= now; past+=5000) {
+                for (; past <= now; past += 5000) {
                     ret.push(past);
                 }
                 return ret;
@@ -85,7 +85,7 @@ router.route('/online')
                     { 'player|666-888': 0 }
                 ]
             });
-            
+
         data.online.forEach((item, index) => {
             item.time = times[index];
         });

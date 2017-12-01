@@ -175,7 +175,7 @@ export default {
         left: -210px;
     }
 
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     transition: left .1s;

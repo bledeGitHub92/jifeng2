@@ -4,7 +4,9 @@ module.exports = function (io, socket) {
     return new Promise(resolve => {
         var timer;
         
-        socket.on('start delta', () => {
+        socket.on('start delta', msg => {
+            console.log(msg);
+            clearInterval(timer);
             socket.emit('start delta', initData());
             timer = setInterval(() => {
                 socket.emit('start delta', mock({

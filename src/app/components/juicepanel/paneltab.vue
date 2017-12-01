@@ -1,10 +1,12 @@
 <template>
     <h3 class="panel-tabs">
-        <a v-for="(value,key) of tabs" :key="key" :class="{active:tabName===key}" @click="$emit('changeTab', key)">{{value}}</a>
+        <a v-for="(value,key) of tabs" :key="key" :class="{active:tabName===key}" @click="changeTab(key)">{{value}}</a>
     </h3>
 </template>
 
 <script>
+import { mapState, mapMutations, mapActions } from 'vuex';
+
 export default {
     name: 'PanelTab',
     props: {
@@ -12,12 +14,16 @@ export default {
             type: Object,
             required: true
         },
-        tabName: {
-            type: String,
-            required: true
-        }
+    },
+    computed: {
+        ...mapState(['tabName'])
     },
     methods: {
+        ...mapMutations(['changePanelTab']),
+        changeTab(key) {
+            this.changePanelTab(key);
+            this.$emit('showChart');
+        }
     }
 }
 </script>
@@ -46,7 +52,7 @@ export default {
 
         &.active {
             color: #0e90d2;
-            border-bottom: 3px solid #0e90d2;
+            border-bottom: 2px solid #0e90d2;
             background-color: #fff;
         }
     }

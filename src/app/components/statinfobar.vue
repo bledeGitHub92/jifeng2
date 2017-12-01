@@ -161,8 +161,8 @@ export default {
 
 <style lang="less" scoped>
 .stat-info-bar {
-    animation: pop-appear 0.3s cubic-bezier(0.8, 0.02, 0.45, 0.91) forwards;
     margin-top: 30px;
+    animation: pop-appear 0.3s cubic-bezier(0.8, 0.02, 0.45, 0.91) forwards;
     font-size: 14px;
     color: #333;
 

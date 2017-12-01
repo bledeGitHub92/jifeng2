@@ -9,8 +9,8 @@ var DragDrop = function () {
 
     function handleEvent(event) {
         var target = event.target,
-            docHeight = Math.max(document.documentElement.scrollHeight, document.documentElement.clientHeight),
-            docWidth = Math.max(document.documentElement.scrollWidth, document.documentElement.clientWidth);
+            docHeight = document.documentElement.clientHeight,
+            docWidth = document.documentElement.clientWidth;
 
         function limit(num, min, max) {
             if (num < min) { num = min; }
@@ -41,7 +41,7 @@ var DragDrop = function () {
                 if (dragging !== null) {
                     event.preventDefault();
                     left = limit(event.clientX - diffX, 0, docWidth - elemWidth);
-                    top = limit(event.clientY - diffY, 0, docHeight - elemHeight);
+                    top = limit(event.clientY - diffY, 0, docHeight - 42);
                     // 指定位置
                     dragging.style.left = left + 'px';
                     dragging.style.top = top + 'px';

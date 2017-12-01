@@ -1,6 +1,25 @@
 <template>
     <div class="topnav am-vertical-align">
         <div class="am-vertical-align-middle am-g am-g-collapse">
+            <ul @click="toggleTip" @mousedown.stop @mouseenter="clearTipTimer" class="info-tips">
+                <li>
+                    <a class="am-icon-history am-icon-sm"></a>
+                    <span class="am-badge am-badge-danger am-round">{{tipQueue.length}}</span>
+                    <div v-show="tipState" class="tips-dropdown-wrapper am-radius">
+                        <div class="tips-dropdown-ref">
+                            <ul class="tips-dropdown am-radius">
+                                <li v-for="request of tipQueue" :key="request.detail" class="am-vertical-align" :title="request.emitter">
+                                    <div class="am-vertical-align-middle">
+                                        <span :class="['am-fl',request.state==='pending'?'am-text-secondary':request.state==='success'?'am-text-success':'am-text-warning']">{{request.detail}}</span>
+                                        <span :class="['am-fr','am-badge','am-round',request.state==='pending'?'am-badge-secondary':request.state==='success'?'am-badge-success':'am-badge-warning']">{{request.state==='pending'?'请求中':request.state==='success'?'成功':'失败'}}</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div :style="{width:tipCounter+'%'}" class="count-down am-radius"></div>
+                    </div>
+                </li>
+            </ul>
             <div class="topnav-left am-vertical-align am-u-sm-6 am-u-md-6 am-u-lg-5">
                 <div class="am-vertical-align-middle">
                     <ul class="am-hide-md-down calendar">
@@ -39,13 +58,20 @@ export default {
     name: 'TopNav',
     data() {
         return {
-            calendar: this.getDate()
+            calendar: this.getDate(),
         }
     },
+    props: {
+        queueState: {
+            type: String,
+            required: true
+        }
+    },
+    computed: {
+        ...mapState(['tipState', 'tipCounter', 'tipQueue'])
+    },
     methods: {
-        ...mapMutations([
-            'toggleSite'
-        ]),
+        ...mapMutations(['toggleTip', 'clearTipTimer']),
         getDate() {
             var date = new Date(),
                 year = date.getFullYear(),
@@ -68,7 +94,7 @@ export default {
             });
 
             return times;
-        }
+        },
     }
 }
 </script>
@@ -80,11 +106,117 @@ export default {
 
     &>div {
         width: 100%;
+        padding-left: 45px;
+        position: relative;
+        top: 0;
+        left: 0;
     }
 
     ul {
         font-size: 1.3rem;
         margin: 0;
+    }
+
+    .info-tips {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+
+        &>li {
+            position: relative;
+            top: 0;
+            left: 0;
+            float: left;
+            height: 100%;
+            line-height: 40px;
+            width: 50%;
+            text-align: center;
+            cursor: pointer;
+
+            .tips-dropdown-wrapper {
+                animation: pop-appear .3s cubic-bezier(.8, .02, .45, .91) forwards;
+                position: absolute;
+                top: 50px;
+                left: 0;
+                background-color: #fff;
+                z-index: 1;
+                width: 200px;
+                box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+                padding: 10px 0;
+
+                &::before {
+                    position: absolute;
+                    top: -10px;
+                    left: 10px; // transform: translateX(-50%);
+                    content: ' ';
+                    display: block;
+                    border-bottom: 10px solid #fff;
+                    border-left: 10px solid transparent;
+                    border-right: 10px solid transparent;
+                    z-index: 1;
+                }
+
+                .tips-dropdown-ref {
+                    position: relative;
+                    left: 0;
+                    top: 0;
+                    height: 119px;
+                    overflow: hidden;
+
+                    .tips-dropdown {
+                        transition: top .3s;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+
+                        li {
+                            animation: pop-appear 0.3s cubic-bezier(0.8, 0.02, 0.45, 0.91) forwards;
+                            line-height: normal;
+                            height: 40px;
+                            color: #333;
+                            padding: 0 20px;
+                            padding-left: 30px;
+                            border-bottom: 1px dashed #ddd;
+                            background-clip: padding-box;
+                            &:hover {
+                                background-color: #f5f5f5;
+                            }
+                            &:last-child {
+                                border: 0;
+                            }
+
+                            div {
+                                width: 100%;
+                                font-size: 14px;
+                            }
+                        }
+                    }
+                }
+
+                .count-down {
+                    position: absolute;
+                    left: 0;
+                    bottom: 0;
+                    height: 3px;
+                    width: 100%;
+                    background-color: #0e90d2;
+                }
+            }
+
+            &>span {
+                position: absolute;
+                top: 0px;
+                left: 6px;
+            }
+
+            a {
+                color: #fff;
+                display: inline-block;
+                width: 100%;
+            }
+        }
     }
 
     .topnav-left {
@@ -95,7 +227,9 @@ export default {
         background-color: rgba(0, 0, 0, 0.2);
         box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
 
-        &>div { font-size: 0; }
+        &>div {
+            font-size: 0;
+        }
 
         ul {
             display: inline-block;

@@ -43,7 +43,7 @@
         </div>
         <!-- juice-panel  -->
         <router-view></router-view>
-        <div class="footer am-vertical-align">
+        <div :style="marginLeft" class="footer am-vertical-align">
             <ul @click="showWidget" class="thumbnail-list am-vertical-align-middle am-btn-group">
                 <li v-for="widget of widgets" :title="widget.alias" :class="{'active':widgetList.includes(widget)}" :key="widget.name" class="thumbnail-item am-icon-qq am-icon-sm am-btn"></li>
             </ul>
@@ -52,72 +52,35 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
 import { stackCounter } from '../../../lib/utils';
 
 export default {
     name: 'JuiceBody',
     data() {
         return {
-            // widget 列表
-            widgets: [
-                { alias: '玩家', name: 'player', },
-                { alias: '邮件', name: 'mail', },
-                { alias: '公告', name: 'announcement', },
-                { alias: '图表', name: 'grpah', },
-            ],
-            // filter detail
-            filterDetailState: false
+        }
+    },
+    props: {
+        widgets: {
+            type: Array,
+            required: true
+        },
+        filterDetailState: {
+            type: Boolean,
+            required: true
         }
     },
     computed: {
-        ...mapState(['widgetList'])
-    },
-    mounted() {
-        // keydown 句柄
-        document.addEventListener('keydown', this.documentKeydownListener, false);
-        // keyup 句柄
-        document.addEventListener('keyup', this.documentKeyupListener, false);
-    },
-    beforeDestroy() {
-        document.removeEventListener('keydown', this.documentKeydownListener, false);
-        document.removeEventListener('keyup', this.documentKeyupListener, false);
+        ...mapState(['widgetList', 'contentBlockMarginLeft']),
+        marginLeft() {
+            return { marginLeft: this.contentBlockMarginLeft + 'px' };
+        }
     },
     methods: {
         ...mapMutations([
-            'toggleWidget', 'clearWidgetList',
-            'changeBackdrop', 'changeEventDialog'
+            'toggleWidget', 'changeBackdrop', 'changeEventDialog'
         ]),
-        documentKeyupListener({ keyCode }) {
-            hideFilterDetail.call(this);
-            function hideFilterDetail() {
-                if (keyCode === 192) this.filterDetailState = false;
-            }
-        },
-        // TODO: 按 esc 关闭 evet-dialog
-        documentKeydownListener({ keyCode, altKey }) {
-            popupOfShortcutKey.call(this);
-            showFilterDetail.call(this);
-            this.clearWidgetList(keyCode);
-
-            function showFilterDetail() {
-                if (keyCode === 192) this.filterDetailState = true;
-            }
-
-            function popupOfShortcutKey() {
-                var index = [49, 50, 51, 52].indexOf(keyCode),
-                    length = this.widgetList.length,
-                    widget = null;
-
-                if (altKey && index !== -1) {
-                    this.toggleWidget(this.widgets[index]);
-                    this.$nextTick(() => {
-                        widget = initWidgetPos(length, this.widgetList);
-                        if (widget) { initWidgetStack(widget, stackCounter.increase()); }
-                    });
-                }
-            }
-        },
         showWidget({ target }) {
             var title = target.title,
                 length = this.widgetList.length,
@@ -147,6 +110,7 @@ function initWidgetPos(length, list) {
             currElem = widgets[length - 1],
             coord = localStorage.getItem(currElem.id);
 
+
         if (coord) {
             coord = JSON.parse(coord);
             currElem.style.cssText = `top:${coord.top}px;left:${coord.left}px`;
@@ -162,8 +126,8 @@ function initWidgetPos(length, list) {
             }
 
             currElem.style.cssText = `top:${currTop}px;left:${currLeft}px`;
-            return currElem;
         }
+        return currElem;
     }
 }
 // 初始化 widget 的层叠顺序
@@ -187,8 +151,8 @@ function initWidgetStack(widget, counter) {
         border-color: rgb(255, 255, 255) rgba(0, 0, 0, 0.1);
     }
 
-    min-height: 100%;
-    padding-bottom: 105px;
+    height: 100%;
+    padding-bottom: 160px;
     position: relative;
     color: #9ea7b3;
     overflow: hidden;
@@ -322,8 +286,8 @@ function initWidgetStack(widget, counter) {
     .breadcrumb {
         height: 50px;
         padding: 0 30px;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-        background: none 0px 0px repeat scroll rgba(0, 0, 0, 0.02);
+        border-bottom: 1px solid #ddd;
+        background-color: #f0f0f0;
 
         ul {
             margin: 0;
@@ -342,13 +306,14 @@ function initWidgetStack(widget, counter) {
     }
 
     .footer {
-        bottom: 0px;
         height: 50px;
+        position: fixed;
         left: 0px;
-        position: absolute;
+        bottom: 0px;
         width: 100%;
-        background: #f8f8f8;
+        background: #f7f7f7;
         border-top: 1px solid #ddd;
+        transition: margin .1s;
 
         .thumbnail-list {
             margin: 0;

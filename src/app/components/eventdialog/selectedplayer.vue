@@ -1,13 +1,13 @@
 <template>
-    <div>
-        <p v-show="selectedPlayerNumber>12" class="selected-counter clearfix">
-            <span class="am-fr">{{selectedPlayerNumber}} 人</span>
-        </p>
-        <div class="selected-player-container clearfix">
-            <span @click.stop="deletePlayer(player)" v-for="player of selectedPlayers" :key="player.id" :title="player.name+'\n'+player.id" class="selected-player am-icon-user">
+    <div class="selected-player">
+        <div class="player-container clearfix">
+            <span @click.stop="deletePlayer(player)" v-for="player of selectedPlayers" :key="player.id" :title="player.name+'\n'+player.id" class="am-icon-user">
                 {{player.name}}
             </span>
         </div>
+        <p class="selected-counter clearfix">
+            <span class="am-fr">选中 {{selectedPlayerNumber}} 人</span>
+        </p>
     </div>
 </template>
 
@@ -39,15 +39,24 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.selected-player {
+    padding: 20px 0;
+}
 .selected-counter {
-    margin-bottom: 10px;
+    margin: 0;
+    background-color: #f7f7f7;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    padding: 6px 20px;
+    margin-top: 20px;
 }
 
-.selected-player-container {
+.player-container {
+    padding: 0 20px;
+    padding-bottom: 1px;
     max-height: 100px;
     overflow: auto;
-    padding-bottom: 1px;
-    .selected-player {
+    span {
         float: left;
         padding: 4px 0;
         padding-right: 10px;

@@ -8,18 +8,12 @@
             <keep-alive>
                 <component :is="enabledEventDialog"></component>
             </keep-alive>
-            <query-detail v-if="queryDialogList.indexOf(enabledEventDialog)!==-1">
-                <div class="target am-icon-user"> 龙傲天</div>
-                <hr>
-                <component :is="enabledEventDialog"></component>
-            </query-detail>  
         </div>
     </div>
 </template>
 
 <script>
 import SendMail from './eventdialog/operate/sendmail.vue';
-import QueryDetail from './eventdialog/query/querydetail.vue';
 import QueryItem from './eventdialog/query/queryItem.vue';
 import PageFilter from './eventdialog/pagefilter.vue';
 import { mapState } from 'vuex';
@@ -27,13 +21,10 @@ import { mapState } from 'vuex';
 export default {
     name: 'EventDialog',
     components: {
-        SendMail, QueryDetail,
-        QueryItem, PageFilter
+        SendMail, QueryItem, PageFilter
     },
     data() {
         return {
-            operateDialogList: ['sendMail'],
-            queryDialogList: ['queryItem']
         }
     },
     computed: {
@@ -63,7 +54,7 @@ export default {
         left: 0;
         padding: 7px;
         padding-left: 20px;
-        border-bottom: 1px solid #E9EAEB;
+        border-bottom: 1px solid #ddd;
         background-color: #f7f7f7;
 
         h4 {

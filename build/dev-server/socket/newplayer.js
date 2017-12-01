@@ -5,6 +5,7 @@ module.exports = function (io, socket) {
         var timer;
 
         socket.on('start newplayer', () => {
+            clearInterval(timer);
             socket.emit('start newplayer', initData());
             timer = setInterval(() => {
                 socket.emit('start newplayer', mock({

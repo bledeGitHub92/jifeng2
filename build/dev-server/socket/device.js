@@ -5,6 +5,7 @@ module.exports = function (io, socket) {
         var timer;
 
         socket.on('start device', () => {
+            clearInterval(timer);
             socket.emit('start device', initData());
             timer = setInterval(() => {
                 socket.emit('start device', mock({
