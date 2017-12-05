@@ -45,7 +45,7 @@ export default {
     computed: {
         ...mapState([
             'platform', 'channel', 'server',
-            'backdropState', 'socket', 'tabName'
+            'backdropState', 'socket'
         ]),
         currentList() {
             this.backup = this[this.currentView];
@@ -65,7 +65,7 @@ export default {
     },
     methods: {
         ...mapMutations(['changeBackdrop']),
-        ...mapActions(['socketEmit']),
+        ...mapActions('request', ['socketEmit']),
         toggleItem({ target }) {
             var checked = this.checked,
                 text = target.textContent,

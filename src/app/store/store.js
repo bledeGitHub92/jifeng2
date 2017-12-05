@@ -1,9 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import defaultMenuList from './sidenav/defaultMenuList';
 import io from 'socket.io-client';
-import charts from './charts';
-import Request from '../lib/Request';
+import request from './modules/request';
+import defaultMenuList from './sidenav/defaultMenuList';
 
 Vue.use(Vuex);
 
@@ -22,6 +21,9 @@ function getPower() {
 async function initStore() {
     var { platform, channel, server } = await getPower();
     return new Vuex.Store({
+        modules: {
+            request
+        },
         state: {
             platform, channel, server,
             //socket
@@ -66,21 +68,6 @@ async function initStore() {
             widgetList: [],
             // 选中玩家列表
             selectedPlayers: [],
-            // panel-tab
-            tabName: 'online',
-            // graph loading
-            graphLoading: false,
-            timestamp: 0,
-            // chart
-            chart: null,
-            // 消息队列
-            tipState: '',
-            // 消息计时器百分比
-            tipCounter: '100',
-            // 消息计时器 timer
-            tipTimer: 0,
-            // 消息队列
-            tipQueue: []
         },
         getters: {
             addIcons(state) {
@@ -157,61 +144,6 @@ async function initStore() {
             changeSelectedMode(state, mode) {
                 state.selectedMode = mode;
             },
-            // 改变 panel-tab
-            changePanelTab(state, tabName) {
-                state.tabName = tabName;
-            },
-            // 显示 graphLoading
-            showGraphLoading(state) {
-                state.graphLoading = true;
-            },
-            // 隐藏 graphLoading
-            hideGraphLoading(state) {
-                state.graphLoading = false;
-            },
-            // 刷新 timestamp
-            refreshTimestamp(state, timestamp) {
-                state.timestamp = timestamp;
-            },
-            // 初始化 chart
-            initChart(state, { type, alias }) {
-                state.chart = charts[type](alias);
-            },
-            // 销毁 chart
-            destroyChart(state) {
-                state.chart && state.chart.destroy();
-            },
-            // 切换 tip
-            toggleTip(state) {
-                state.tipState = !state.tipState;
-            },
-            showTipShortly(state) {
-                var start = +new Date,
-                    remain, percent;
-                state.tipState = true;
-                state.tipTimer = setInterval(() => {
-                    state.tipCounter = Math.max(0, (1 - (+new Date() - start) / 3000)) * 100;
-                    if (state.tipCounter === 0) {
-                        clearInterval(state.tipTimer);
-                        state.tipState = false;
-                    }
-                }, 20);
-            },
-            clearTipTimer(state) {
-                state.tipCounter = 0;
-                clearInterval(state.tipTimer);
-            },
-            // 开启 tip
-            showTip(state) {
-                state.tipState = true
-            },
-            // 关闭 tip
-            hideTip(state) {
-                state.tipState = false;
-            },
-            createRequest(state, request) {
-                state.tipQueue.unshift(request);
-            }
         },
         actions: {
             // 清空玩家列表，添加玩家
@@ -228,25 +160,11 @@ async function initStore() {
                         commit('changeBackdrop', 'hide');
                     } else if (state.widgetList.length) {
                         commit('clearWidgetList');
+                    } else if (state.request.tipState) {
+                        commit('request/hideTip');
                     }
                 }
             },
-            // socket emit
-            socketEmit({ state, commit }, { type, timestamp, request }) {
-                var alias = ({
-                    online: '玩家', device: '设备',
-                    newplayer: '玩家', income: '收入'
-                })[state.tabName];
-
-                commit('createRequest', request)
-                commit('clearTipTimer');
-                commit('showTipShortly')
-                commit('showGraphLoading');
-                commit('refreshTimestamp', timestamp);
-                commit('destroyChart');
-                commit('initChart', { type, alias });
-                state.socket.emit(`start ${state.tabName}`);
-            }
         }
     });
 }

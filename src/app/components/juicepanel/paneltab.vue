@@ -1,28 +1,32 @@
 <template>
     <h3 class="panel-tabs">
-        <a v-for="(value,key) of tabs" :key="key" :class="{active:tabName===key}" @click="changeTab(key)">{{value}}</a>
+        <a v-for="(value,key) of tabs" :key="key" :class="{active:active===key}" @click="changeTab(key)">{{value}}</a>
     </h3>
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex';
+import { mapMutations } from 'vuex';
 
 export default {
     name: 'PanelTab',
     props: {
+        name: {
+            type: String,
+            required: true
+        },
         tabs: {
             type: Object,
             required: true
         },
-    },
-    computed: {
-        ...mapState(['tabName'])
+        active: {
+            type: String,
+            required: true
+        }
     },
     methods: {
-        ...mapMutations(['changePanelTab']),
+        ...mapMutations('request', ['changePanelTab']),
         changeTab(key) {
-            this.changePanelTab(key);
-            this.$emit('showChart');
+            this.$emit('toggleTab', { name: this.name, prev: this.active, next: key });
         }
     }
 }

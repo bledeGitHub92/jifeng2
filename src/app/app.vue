@@ -38,6 +38,7 @@ export default {
         ...mapMutations([
             'hideMenu'
         ]),
+        ...mapMutations('request', ['changeTipScrollTop']),
         // 初始化 contextmenu 的功能
         initContextmenuEvent() {
             var menu = this.menuList,
@@ -81,15 +82,14 @@ export default {
             var tipsRef, tipsWrapper;
             if (tipsRef = getParent(target, '.tips-dropdown-ref')) {
                 tipsWrapper = tipsRef.firstElementChild;
-                minTop = tipsRef.offsetHeight - tipsWrapper.offsetHeight;
+                minTop = tipsRef.offsetHeight + 1 - tipsWrapper.offsetHeight;
                 prev = parseInt(tipsWrapper.style.top);
                 next = (prev || 0) + delta / 2;
                 if (minTop < 0) {
-                    setTop(tipsWrapper, next >= 0 ? 0 : next < minTop ? minTop : next);
-                } else {
-                    setTop(slideWrapper, next > 0 ? 0 : next);
+                    this.changeTipScrollTop(next >= 0 ? 0 : next < minTop ? minTop : next);
+                } else if (prev < 0 && delta > 0) {
+                    this.changeTipScrollTop(next > 0 ? 0 : next);
                 }
-
             }
 
             // juice-content 自定义滚动条
@@ -105,6 +105,7 @@ export default {
                     setTop(slideWrapper, next > 0 ? 0 : next);
                 }
             }
+
             function setTop(elem, top) {
                 elem.style.top = top + 'px';
             }

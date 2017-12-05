@@ -7,7 +7,7 @@
                     <span class="am-badge am-badge-danger am-round">{{tipQueue.length}}</span>
                     <div v-show="tipState" class="tips-dropdown-wrapper am-radius">
                         <div class="tips-dropdown-ref">
-                            <ul class="tips-dropdown am-radius">
+                            <ul class="tips-dropdown am-radius" :style="{top:tipScrollTop+'px'}">
                                 <li v-for="request of tipQueue" :key="request.detail" class="am-vertical-align" :title="request.emitter">
                                     <div class="am-vertical-align-middle">
                                         <span :class="['am-fl',request.state==='pending'?'am-text-secondary':request.state==='success'?'am-text-success':'am-text-warning']">{{request.detail}}</span>
@@ -68,10 +68,10 @@ export default {
         }
     },
     computed: {
-        ...mapState(['tipState', 'tipCounter', 'tipQueue'])
+        ...mapState('request', ['tipState', 'tipCounter', 'tipQueue', 'tipScrollTop'])
     },
     methods: {
-        ...mapMutations(['toggleTip', 'clearTipTimer']),
+        ...mapMutations('request', ['toggleTip', 'clearTipTimer']),
         getDate() {
             var date = new Date(),
                 year = date.getFullYear(),
@@ -135,6 +135,7 @@ export default {
             cursor: pointer;
 
             .tips-dropdown-wrapper {
+                cursor: default;
                 animation: pop-appear .3s cubic-bezier(.8, .02, .45, .91) forwards;
                 position: absolute;
                 top: 50px;
@@ -180,6 +181,7 @@ export default {
                             padding-left: 30px;
                             border-bottom: 1px dashed #ddd;
                             background-clip: padding-box;
+                            cursor: pointer;
                             &:hover {
                                 background-color: #f5f5f5;
                             }
@@ -268,7 +270,7 @@ export default {
             li {
                 cursor: pointer;
                 padding: 0 15px;
-                font-size: 1.3rem;
+                font-size: 13px;
                 vertical-align: middle;
                 display: inline-block;
 
