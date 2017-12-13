@@ -5,8 +5,6 @@ export default {
         tabName: 'online',
         // graph loading
         graphLoading: false,
-        // 请求开始时间
-        requestStartTime: 0,
         // 消息队列
         tipState: false,
         // 消息计时器百分比
@@ -31,10 +29,6 @@ export default {
         // 隐藏 graphLoading
         hideGraphLoading(state) {
             state.graphLoading = false;
-        },
-        // 刷新 timestamp
-        refreshTimestamp(state, timestamp) {
-            state.requestStartTime = timestamp;
         },
         // 切换 tip
         toggleTip(state) {
@@ -68,6 +62,10 @@ export default {
         createRequest(state, request) {
             state.tipQueue.unshift(request);
         },
+        // 删除第一条消息
+        shiftRequest(state) {
+            state.tipQueue.shift();
+        },
         // 重置消息队列滚动条的位置
         changeTipScrollTop(state, top = 0) {
             state.tipScrollTop = top;
@@ -75,16 +73,15 @@ export default {
     },
     actions: {
         // socket
-        socket({ state, rootState, commit }) {
-            // rootState.socket.emit(`start ${state.tabName}`);
+        socket({ state, rootState, commit }, tabName) {
+            rootState.socket.emit(`start ${tabName}`);
         },
-        sendMsg({ state, rootState, commit, dispatch }, { mode, request }) {
-            dispatch(mode);
+        sendMsg({ state, rootState, commit, dispatch }, { mode, payload, request }) {
+            dispatch(mode, payload);
             commit('showTip');
             commit('clearTipTimer');
             commit('changeTipScrollTop');
             commit('createRequest', request);
-            commit('refreshTimestamp', +new Date);
         }
     }
 }

@@ -3,7 +3,7 @@
         <stat-info-bar></stat-info-bar>
         <juice-panel @toggleChart="toggleChart" :chart-state="chartState">
             <panel-tab slot="tabs" v-bind="panelTab" @toggleTab="toggleTab"></panel-tab>
-            <dynamic-chart v-show="chartState" v-bind="panelTab" @getChart="getChart"></dynamic-chart>
+            <g2-chart v-show="chartState" v-bind="panelTab" @getChart="getChart"></g2-chart>
         </juice-panel>
     </juice-content>
 </template>
@@ -13,7 +13,7 @@ import JuiceContent from '../components/juicecontent.vue'
 import JuicePanel from '../components/juicepanel.vue';
 import PanelTab from '../components/juicepanel/paneltab.vue';
 import StatInfoBar from '../components/statinfobar.vue';
-import DynamicChart from '../components/dynamicchart.vue';
+import G2Chart from '../components/g2chart.vue';
 import { mapState, mapMutations, mapActions } from 'vuex';
 import Request from '../lib/Request';
 
@@ -21,7 +21,7 @@ export default {
     name: 'summary',
     components: {
         JuiceContent, JuicePanel, StatInfoBar,
-        PanelTab, DynamicChart
+        PanelTab, G2Chart
     },
     data() {
         return {
@@ -71,13 +71,46 @@ export default {
     },
     computed: {
         ...mapState(['socket']),
-        ...mapState('request', ['requestStartTime']),
+        currTab() {
+            return this.panelTab.active;
+        }
     },
     methods: {
         ...mapMutations('request', ['showGraphLoading', 'hideGraphLoading']),
         ...mapActions('request', ['sendMsg']),
+        // 从 g2-chart 获取 chart
+        getChart({ name, chart }) {
+            this.charts[name].chart = chart;
+            this.charts[name].init(this.panelTab.tabs[this.currTab]);
+            this.toggleSocket(this.charts[name]);
+        },
+        // 切换 socket 事件
+        toggleSocket(chart) {
+            var socket = this.socket,
+                tabName = this.currTab,
+                request = new Request({ emitter: '实时概况', detail: this.panelTab.tabs[tabName] }),
+                data = [];
+
+            // 更新 chart
+            function updateChart(res) {
+                var list = res[tabName],
+                    rest = 1000 - (+new Date() - request.start);
+
+                data.push(...list);
+                chart.timer = setTimeout(() => {
+                    request.success();
+                    chart.update(data);
+                }, rest > 0 ? rest : 0);
+            }
+            // 切换 socket 事件
+            this.socket.off(`start ${tabName}`);
+            this.socket.on(`start ${tabName}`, updateChart);
+            // 发送 socket 事件
+            this.sendMsg({ mode: 'socket', payload: tabName, request });
+        },
+        // 切换图表
         toggleTab({ name, prev, next }) {
-            if (next !== this.panelTab.active) {
+            if (next !== prev) {
                 var chart = this.charts[name];
                 this.socket.emit(`end ${prev}`);
                 this.panelTab.active = next;
@@ -90,47 +123,14 @@ export default {
         toggleChart() {
             this.chartState = !this.chartState;
         },
-        // 从 g2-chart 获取 chart
-        getChart({ name, chart }) {
-            this.charts[name].chart = chart;
-            this.charts[name].init(this.panelTab.tabs[this.panelTab.active]);
-            this.toggleSocket(this.charts[name]);
-        },
-        // 切换 socket 事件
-        toggleSocket(chart) {
-            var socket = this.socket,
-                tabName = this.panelTab.active,
-                request = new Request({ emitter: '实时概况', detail: this.panelTab.tabs[tabName] }),
-                data = [], ctx = this;
-    
-            this.showGraphLoading();
-            // 更新 chart
-            function updateChart(res) {
-                var list = res[tabName],
-                    rest = 1000 - (+new Date() - ctx.requestStartTime);
-
-                data.push(...list);
-
-                chart.timer = setTimeout(() => {
-                    ctx.hideGraphLoading();
-                    request.success();
-                    chart.update(data);
-                }, rest > 0 ? rest : 0);
-            }
-            // 切换 socket 事件
-            this.socket.off(`start ${tabName}`);
-            this.socket.on(`start ${tabName}`, updateChart);
-            // 发送 socket 事件
-            this.sendMsg({ mode: 'socket', request });
-            this.socket.emit(`start ${tabName}`);
-        },
     },
     beforeDestroy() {
         var socket = this.socket;
-        var tabName = this.panelTab.active;
+        var tabName = this.currTab;
 
         socket.off(`start ${tabName}`);
         socket.emit(`end ${tabName}`);
+        this.charts.dynamic.reset();
     }
 }
 </script>

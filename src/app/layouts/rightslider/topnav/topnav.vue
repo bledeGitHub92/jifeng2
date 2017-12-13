@@ -162,7 +162,7 @@ export default {
                     position: relative;
                     left: 0;
                     top: 0;
-                    height: 119px;
+                    height: 99px;
                     overflow: hidden;
 
                     .tips-dropdown {

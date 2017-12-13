@@ -10,7 +10,7 @@ import ChartLoading from '../components/chart/chartloading.vue';
 import { Chart } from 'g2';
 
 export default {
-    name: 'DynamicChart',
+    name: 'G2Chart',
     components: {
         ChartLoading
     },
@@ -54,7 +54,6 @@ export default {
 
 <style lang="less" scoped>
 .g2-chart {
-    min-height: 455px;
     position: relative;
     top: 0;
     left: 0;
