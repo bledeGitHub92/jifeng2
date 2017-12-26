@@ -25,7 +25,8 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex';
+import Request from 'lib/Request';
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
 
 export default {
     name: 'PageFilter',
@@ -44,9 +45,9 @@ export default {
     },
     computed: {
         ...mapState([
-            'platform', 'channel', 'server',
-            'backdropState', 'socket'
+            'platform', 'channel', 'server', 'backdropState', 'socket'
         ]),
+        ...mapGetters('viewStates', ['computedSocketEvents']),
         currentList() {
             this.backup = this[this.currentView];
             return this.backup.filter(({ text }) => text.toLowerCase().indexOf(this.keyword.toLowerCase()) !== -1);
@@ -65,7 +66,8 @@ export default {
     },
     methods: {
         ...mapMutations(['changeBackdrop']),
-        ...mapActions('request', ['socketEmit']),
+        ...mapActions('request', ['sendMsg']),
+        ...mapActions('viewStates', ['resetAllChart']),
         toggleItem({ target }) {
             var checked = this.checked,
                 text = target.textContent,
@@ -95,7 +97,7 @@ export default {
                         { text: '平台', id: 'platform' },
                         { text: '渠道', id: 'channel' },
                         { text: '区服', id: 'server' },
-                    ].filter(item => item.text === text)[0].id;
+                    ].find(item => item.text === text).id;
                     break;
                 // 全选-反选
                 case 'invert':
@@ -111,8 +113,8 @@ export default {
                     break;
                 // 确定
                 case 'confirm':
-                    this.socket.emit('start delta', { checked: this.checked, type: this.currentView });
-                    this.socketEmit({ type: 'summary', timestamp: +new Date, request: { emitter: '实时概况', detail: '实时概况' } });
+                    this.resetAllChart();
+                    this.sendMsg({ mode: 'socket', eventName: this.computedSocketEvents, request: new Request({ emitter: '实时概况', detail: '实时概况' }) });
                     this.changeBackdrop('hide');
                     break;
                 // 取消
@@ -124,6 +126,7 @@ export default {
     },
     mounted() {
         this.$refs.keyword.focus();
+        console.log(this.computedSocketEvents);
     },
 }
 </script>

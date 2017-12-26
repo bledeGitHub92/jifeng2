@@ -5,7 +5,7 @@ initStore.then(store => { ({ state, commit } = store); });
 
 function Request({ emitter, detail }) {
     this.state = 'pending';
-    this.start = +new Date;
+    this.created = +new Date;
     this.emitter = emitter;
     this.detail = detail;
     this.prev = state.request.tipQueue[0] || null;
@@ -27,7 +27,7 @@ Request.prototype = {
         return this;
     },
     preprocess() {
-        if (this.start - this.prev.start < 1000) {
+        if (this.prev.state === 'pending') {
             commit('request/shiftRequest');
         }
     },

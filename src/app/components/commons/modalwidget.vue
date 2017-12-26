@@ -37,9 +37,9 @@ export default {
         closeWidget(event) {
             var title = event.target.previousElementSibling.textContent;
 
-            this.toggleWidget(this.widgetList.filter(
+            this.toggleWidget(this.widgetList.find(
                 widget => widget.alias === title
-            )[0]);
+            ));
         }
     }
 

@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import JuicePanel from '../components/juicepanel.vue';
-import PlayerList from '../components/playerlist.vue';
+import JuicePanel from '../commons/juicepanel.vue';
+import PlayerList from '../commons/playerlist.vue';
 import { mapMutations } from 'vuex';
 
 export default {

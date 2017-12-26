@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { getParent } from '../lib/utils';
+import { getParent } from 'lib/utils';
 import { mapState, mapMutations } from 'vuex';
 
 export default {

@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { getParent } from '../lib/utils';
+import { getParent } from 'lib/utils';
 import list from './juicetable/role.json';
 import { mapState, mapMutations, mapActions } from 'vuex';
 

@@ -5,19 +5,25 @@
                 <li>
                     <a class="am-icon-history am-icon-sm"></a>
                     <span class="am-badge am-badge-danger am-round">{{tipQueue.length}}</span>
-                    <div v-show="tipState" class="tips-dropdown-wrapper am-radius">
-                        <div class="tips-dropdown-ref">
-                            <ul class="tips-dropdown am-radius" :style="{top:tipScrollTop+'px'}">
-                                <li v-for="request of tipQueue" :key="request.detail" class="am-vertical-align" :title="request.emitter">
-                                    <div class="am-vertical-align-middle">
-                                        <span :class="['am-fl',request.state==='pending'?'am-text-secondary':request.state==='success'?'am-text-success':'am-text-warning']">{{request.detail}}</span>
-                                        <span :class="['am-fr','am-badge','am-round',request.state==='pending'?'am-badge-secondary':request.state==='success'?'am-badge-success':'am-badge-warning']">{{request.state==='pending'?'请求中':request.state==='success'?'成功':'失败'}}</span>
-                                    </div>
-                                </li>
+                    <transition>
+                        <div v-show="tipState" class="tips-dropdown-wrapper am-radius">
+                            <ul class="dropdown-title">
+                                <li class="active">实时概况</li>
+                                <li>可点击</li>
                             </ul>
+                            <div class="tips-dropdown-ref">
+                                <transition-group name="tips" tag="ul" :style="{top:tipScrollTop+'px'}" class="tips-dropdown am-radius">
+                                    <li v-for="request of tipQueue" :key="request.created" class="am-vertical-align" :title="request.emitter">
+                                        <div class="am-vertical-align-middle">
+                                            <span :class="['am-fl',request.state==='pending'?'am-text-secondary':request.state==='success'?'am-text-success':'am-text-warning']">{{request.detail}}</span>
+                                            <span :class="['am-fr','am-badge','am-round',request.state==='pending'?'am-badge-secondary':request.state==='success'?'am-badge-success':'am-badge-warning']">{{request.state==='pending'?'请求中':request.state==='success'?'成功':'失败'}}</span>
+                                        </div>
+                                    </li>
+                                </transition-group>
+                            </div>
+                            <div :style="{width:tipCounter+'%'}" class="count-down am-radius"></div>
                         </div>
-                        <div :style="{width:tipCounter+'%'}" class="count-down am-radius"></div>
-                    </div>
+                    </transition>
                 </li>
             </ul>
             <div class="topnav-left am-vertical-align am-u-sm-6 am-u-md-6 am-u-lg-5">
@@ -52,7 +58,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
 
 export default {
     name: 'TopNav',
@@ -100,6 +106,40 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.tips-move {
+    transition: transform .3s;
+}
+
+.tips-enter {
+    opacity: 0;
+    // transform: scale(0);
+    transform: translateX(-200px);
+}
+
+.tips-leave-to {
+    opacity: 0;
+    // transform: scale(0);
+    transform: translateX(200px);
+}
+
+.tips-leave-active {
+    width: 100%;
+    position: absolute;
+}
+
+
+
+.v-enter,
+.v-leave-to {
+    transform: translateY(10px);
+    opacity: 0;
+}
+
+.v-enter-active,
+.v-leave-active {
+    transition: all .3s;
+}
+
 .topnav {
     color: #fff;
     height: 75px;
@@ -135,8 +175,7 @@ export default {
             cursor: pointer;
 
             .tips-dropdown-wrapper {
-                cursor: default;
-                animation: pop-appear .3s cubic-bezier(.8, .02, .45, .91) forwards;
+                cursor: default; // animation: pop-appear .3s cubic-bezier(.8, .02, .45, .91) forwards;
                 position: absolute;
                 top: 50px;
                 left: 0;
@@ -157,6 +196,25 @@ export default {
                     border-right: 10px solid transparent;
                     z-index: 1;
                 }
+                .dropdown-title {
+                    padding-left: 30px;
+                    padding-right: 20px;
+                    font-size: 12px;
+                    height: 20px;
+                    line-height: 20px;
+                    margin-bottom: 10px;
+                    li {
+                        float: left;
+                        width: 50%;
+                        color: #aaa;
+                        cursor: pointer;
+                        &.active {
+                            color: #fff;
+                            border-radius: 3px;
+                            background-color: #0e90d2;
+                        }
+                    }
+                }
 
                 .tips-dropdown-ref {
                     position: relative;
@@ -173,7 +231,7 @@ export default {
                         width: 100%;
 
                         li {
-                            animation: pop-appear 0.3s cubic-bezier(0.8, 0.02, 0.45, 0.91) forwards;
+                            transition: all .3s;
                             line-height: normal;
                             height: 40px;
                             color: #333;

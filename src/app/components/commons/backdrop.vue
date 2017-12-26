@@ -1,12 +1,14 @@
 <template>
-    <div @click="hideBackdrop" v-show="backdropState" class="backdrop am-vertical-align">
-        <event-dialog></event-dialog>
-    </div>
+    <transition>
+        <div @click="hideBackdrop" v-show="backdropState" class="backdrop am-vertical-align">
+            <event-dialog></event-dialog>
+        </div>
+    </transition>
 </template>
 
 <script>
 import { mapState, mapMutations } from 'vuex';
-import { getParent } from '../lib/utils';
+import { getParent } from 'lib/utils';
 import EventDialog from './eventdialog.vue';
 
 export default {
@@ -32,7 +34,13 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.backdrop {
+.v-enter,.v-leave-to {
+    opacity: 0;
+}
+.v-enter-active,.v-leave-active {
+    transition: opacity .3s;
+}
+.blur,.backdrop {
     position: fixed;
     left: 0;
     right: 0;

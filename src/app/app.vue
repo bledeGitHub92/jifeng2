@@ -1,7 +1,9 @@
 <template>
     <div @selectstart="forbidSelect" class="jifeng2">
-        <side-nav></side-nav>
-        <right-slider></right-slider>
+        <div class="layout">
+            <side-nav></side-nav>
+            <right-slider></right-slider>
+        </div>
         <modal-widget v-for="widget of widgetList" :key="widget.title" :msg="widget" :id="'modal-'+widget.name"></modal-widget>
         <back-drop></back-drop>
         <context-menu></context-menu>
@@ -9,14 +11,14 @@
 </template>
 
 <script>
-import SideNav from './layouts/sidenav/sidenav.vue';
-import RightSlider from './layouts/rightslider/rightslider.vue';
-import ModalWidget from './components/modalwidget.vue';
-import ContextMenu from './components/contextmenu.vue';
-import BackDrop from './components/backdrop.vue';
+import SideNav from './components/layouts/sidenav/sidenav.vue';
+import RightSlider from './components/layouts/rightslider/rightslider.vue';
+import ModalWidget from './components/commons/modalwidget.vue';
+import ContextMenu from './components/commons/contextmenu.vue';
+import BackDrop from './components/commons/backdrop.vue';
 import { mapState, mapMutations } from 'vuex';
-import DragDrop from './lib/dragDrop';
-import { getParent } from './lib/utils';
+import DragDrop from 'lib/dragDrop';
+import { getParent } from 'lib/utils';
 import Clipboard from 'clipboard';
 import 'amazeui/dist/css/amazeui.min.css';
 
@@ -163,6 +165,9 @@ body,
 .jifeng2 {
     height: 100%;
     user-select: none;
+    .layout {
+        height: 100%;
+    }
 }
 
 body {

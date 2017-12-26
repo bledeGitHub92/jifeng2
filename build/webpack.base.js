@@ -18,7 +18,8 @@ module.exports = {
     ],
     resolve: {
         alias: {
-            'vue': 'vue/dist/vue.common.js'
+            'vue': 'vue/dist/vue.common.js',
+            'lib': path.resolve(__dirname, '../src/app/lib')
         }
     },
     module: {

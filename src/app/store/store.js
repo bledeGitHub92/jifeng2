@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import io from 'socket.io-client';
+import viewStates from './modules/viewStates';
 import request from './modules/request';
 import defaultMenuList from './sidenav/defaultMenuList';
 
@@ -22,7 +23,7 @@ async function initStore() {
     var { platform, channel, server } = await getPower();
     return new Vuex.Store({
         modules: {
-            request
+            viewStates, request
         },
         state: {
             platform, channel, server,
@@ -70,7 +71,8 @@ async function initStore() {
             selectedPlayers: [],
         },
         getters: {
-            addIcons(state) {
+            currView(state, getters) {
+                return state.route.path.slice(1);
             }
         },
         mutations: {

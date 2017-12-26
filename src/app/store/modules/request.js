@@ -1,8 +1,8 @@
+import Request from '../../lib/Request';
+
 export default {
     namespaced: true,
     state: {
-        // panel-tab
-        tabName: 'online',
         // graph loading
         graphLoading: false,
         // 消息队列
@@ -16,12 +16,12 @@ export default {
         // 消息队列 top
         tipScrollTop: 0
     },
-    getters: {},
+    getters: {
+        latestRequest(state) {
+            return state.tipQueue[0];
+        }
+    },
     mutations: {
-        // 改变 panel-tab
-        changePanelTab(state, tabName) {
-            state.tabName = tabName;
-        },
         // 显示 graphLoading
         showGraphLoading(state) {
             state.graphLoading = true;
@@ -73,15 +73,19 @@ export default {
     },
     actions: {
         // socket
-        socket({ state, rootState, commit }, tabName) {
-            rootState.socket.emit(`start ${tabName}`);
+        socket({ rootState }, socketName) {
+            if (typeof socketName === 'string') {
+                rootState.socket.emit(`start ${socketName}`);
+            } else {
+                socketName.forEach(name => { rootState.socket.emit(`start ${name}`); });
+            }
         },
-        sendMsg({ state, rootState, commit, dispatch }, { mode, payload, request }) {
-            dispatch(mode, payload);
+        sendMsg({ state, rootState, commit, dispatch }, { mode, eventName, request }) {
+            dispatch(mode, eventName);
             commit('showTip');
             commit('clearTipTimer');
             commit('changeTipScrollTop');
-            commit('createRequest', request);
+            commit('createRequest', new Request(request));
         }
     }
 }

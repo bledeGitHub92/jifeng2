@@ -9,7 +9,7 @@
 import { mapState, mapMutations, mapActions } from 'vuex';
 import TopNav from './topnav/topnav.vue';
 import JuiceBody from './juicebody/juicebody.vue';
-import { stackCounter } from '../../lib/utils';
+import { stackCounter } from 'lib/utils';
 
 export default {
     name: 'RightSlider',

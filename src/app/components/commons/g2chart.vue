@@ -6,7 +6,7 @@
 
 <script>
 import { mapState } from 'vuex';
-import ChartLoading from '../components/chart/chartloading.vue';
+import ChartLoading from './chart/chartloading.vue';
 import { Chart } from 'g2';
 
 export default {
@@ -21,10 +21,6 @@ export default {
         }
     },
     props: {
-        tabs: {
-            type: Object,
-            required: true
-        },
         name: {
             type: String,
             required: true
@@ -35,14 +31,9 @@ export default {
     },
     methods: {
         createChart() {
-            var chart = new Chart({
-                id: this.name,
-                forceFit: true,
-                height: 450
-            });
             this.$emit('getChart', {
                 name: this.name,
-                chart,
+                chart: new Chart({ id: this.name, height: 450, forceFit: true })
             });
         }
     },

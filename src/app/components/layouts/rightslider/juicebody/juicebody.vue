@@ -53,7 +53,7 @@
 
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex';
-import { stackCounter } from '../../../lib/utils';
+import { stackCounter } from 'lib/utils';
 
 export default {
     name: 'JuiceBody',
@@ -86,9 +86,9 @@ export default {
                 length = this.widgetList.length,
                 widget = null;
 
-            this.toggleWidget(this.widgets.filter(
+            this.toggleWidget(this.widgets.find(
                 widget => widget.alias === title
-            )[0]);
+            ));
             this.$nextTick(() => {
                 widget = initWidgetPos(length, this.widgetList);
                 if (widget) { initWidgetStack(widget, stackCounter.increase()); }

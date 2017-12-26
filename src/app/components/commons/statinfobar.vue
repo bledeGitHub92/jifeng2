@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import ajax from '../lib/ajax';
+import ajax from 'lib/ajax';
 import { mapState } from 'vuex';
 
 export default {

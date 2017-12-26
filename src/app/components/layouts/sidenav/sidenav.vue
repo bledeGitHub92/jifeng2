@@ -38,8 +38,8 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
-import Animate from '../../lib/animate';
-import { showTip, hideTip } from '../../lib/tooltip';
+import Animate from 'lib/animate';
+import { showTip, hideTip } from 'lib/tooltip';
 
 var animate = new Animate();
 
@@ -89,8 +89,7 @@ export default {
 
             function getFolder(menuName) {
                 return Array.from(document.querySelectorAll('.menu-title'))
-                    .filter(li => li.firstChild.textContent === menuName)[0]
-                    .nextElementSibling.firstChild;
+                    .find(li => li.firstChild.textContent === menuName).nextElementSibling.firstChild;
             }
         }
     },

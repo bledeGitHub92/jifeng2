@@ -5,7 +5,6 @@ module.exports = function (io, socket) {
         var timer;
         
         socket.on('start delta', msg => {
-            console.log(msg);
             clearInterval(timer);
             socket.emit('start delta', initData());
             timer = setInterval(() => {

@@ -3,10 +3,10 @@ import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
 
-import summary from '../pages/summary.vue';
-import report from '../pages/report.vue';
-import players from '../pages/players.vue';
-import add from '../pages/add.vue';
+import summary from '../components/views/summary.vue';
+import report from '../components/views/report.vue';
+import players from '../components/views/players.vue';
+import add from '../components/views/add.vue';
 
 const routes = [
     { path: '/summary', component: summary },

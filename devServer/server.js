@@ -2,18 +2,19 @@ const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const webpack = require('webpack');
-const config = require('./webpack.dev.js');    // webpack 开发环境配置
+const config = require('../build/webpack.dev.js');    // webpack 开发环境配置
 const compiler = webpack(config);
-const router = require('./dev-server/router');
-const setSocket = require('./dev-server/socket');
+const router = require('./server/router');
+const setSocket = require('./server/socket');
 
 // mock
 app.use('/v2', router);
 
 // redirect
 app.use(require('connect-history-api-fallback')({
+    index: '/app.html',
     rewrites: [
-        { from: /\/(summary|report|dashboard|mail|form|table|time-line|player\/add)/, to: '/app.html' },
+        // { from: /\/(summary|report|dashboard|mail|form|table|time-line|player\/add)/, to: '/app.html' },
     ]
 }));
 

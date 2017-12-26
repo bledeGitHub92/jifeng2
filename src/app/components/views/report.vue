@@ -1,14 +1,14 @@
 <template>
     <juice-content>
         <juice-panel>
-            <div>add</div>
+            <div>report</div>
         </juice-panel>
     </juice-content>
 </template>
 
 <script>
-import JuiceContent from '../components/juicecontent.vue'
-import JuicePanel from '../components/juicepanel.vue';
+import JuiceContent from '../commons/juicecontent.vue'
+import JuicePanel from '../commons/juicepanel.vue';
 
 export default {
     name: 'report',
