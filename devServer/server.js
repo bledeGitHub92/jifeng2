@@ -28,6 +28,4 @@ app.use(require("webpack-hot-middleware")(compiler));
 // web socket
 setSocket(io);
 
-http.listen(8888, () => {
-    console.log('jifeng2 listenning on port 8888!\n');
-});
+http.listen(8888, () => void console.log('jifeng2 listenning on port 8888!\n'));

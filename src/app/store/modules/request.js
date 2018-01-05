@@ -1,10 +1,13 @@
-import Request from '../../lib/Request';
+import ajax from 'lib/ajax';
+import Request from 'lib/Request';
+import sidenavMap from '../sidenav/defaultMenuList';
 
 export default {
     namespaced: true,
     state: {
+        mark: 'tip',
         // graph loading
-        graphLoading: false,
+        graphLoading: '',
         // 消息队列
         tipState: false,
         // 消息计时器百分比
@@ -13,22 +16,41 @@ export default {
         tipTimer: 0,
         // 消息队列
         tipQueue: [],
+        // 有记录的消息队列
+        recordableQueue: [],
         // 消息队列 top
         tipScrollTop: 0
     },
     getters: {
         latestRequest(state) {
-            return state.tipQueue[0];
+            return state.tipQueue[0] || { emitter: '' };
+        },
+        // 当前路由对应的 -> 中文名
+        emitter(state, getters, rootState, rootGetters) {
+            var emitter = `/${rootGetters.currView}`;
+
+            for (let i = 0, iMax = sidenavMap.length; i < iMax; i++) {
+                let main = sidenavMap[i].lists;
+                for (let n = 0, nMax = main.length; n < nMax; n++) {
+                    let sub = main[n]
+                    if (sub.url === emitter) {
+                        return emitter = sub.name;
+                    }
+                }
+            }
         }
     },
     mutations: {
+        setMark(state, mark) {
+            state.mark = mark;
+        },
         // 显示 graphLoading
-        showGraphLoading(state) {
-            state.graphLoading = true;
+        showGraphLoading(state, loader) {
+            state.graphLoading = loader;
         },
         // 隐藏 graphLoading
         hideGraphLoading(state) {
-            state.graphLoading = false;
+            state.graphLoading = '';
         },
         // 切换 tip
         toggleTip(state) {
@@ -62,9 +84,17 @@ export default {
         createRequest(state, request) {
             state.tipQueue.unshift(request);
         },
+        // 往可记录的消息队列添加消息对象
+        createRecord(state, request) {
+            state.recordableQueue.unshift(request);
+        },
         // 删除第一条消息
         shiftRequest(state) {
             state.tipQueue.shift();
+        },
+        // 删除可记录队列的第一条消息
+        shiftRecord(state) {
+            state.recordableQueue.shift();
         },
         // 重置消息队列滚动条的位置
         changeTipScrollTop(state, top = 0) {
@@ -77,15 +107,26 @@ export default {
             if (typeof socketName === 'string') {
                 rootState.socket.emit(`start ${socketName}`);
             } else {
-                socketName.forEach(name => { rootState.socket.emit(`start ${name}`); });
+                socketName.forEach(name => void rootState.socket.emit(`start ${name}`));
             }
         },
-        sendMsg({ state, rootState, commit, dispatch }, { mode, eventName, request }) {
+        // ajax
+        ajax({ rootState }, url) {
+            console.log(url);
+        },
+        sendMsg({ getters, commit, dispatch }, { mode, eventName, detail, loader = '', recordable }) {
             dispatch(mode, eventName);
             commit('showTip');
             commit('clearTipTimer');
             commit('changeTipScrollTop');
-            commit('createRequest', new Request(request));
-        }
+            commit('showGraphLoading', loader);
+            if (recordable) {
+                commit('setMark', 'record');
+                commit('createRecord', new Request({ emitter: getters.emitter, detail, recordable }));
+            } else {
+                commit('setMark', 'tip');
+                commit('createRequest', new Request({ emitter: getters.emitter, detail }));
+            }
+        },
     }
 }

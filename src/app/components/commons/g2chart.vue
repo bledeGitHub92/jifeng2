@@ -1,6 +1,6 @@
 <template>
     <div :id="name" class="g2-chart">
-        <chart-loading v-show="graphLoading"></chart-loading>
+        <chart-loading :is-load="[name,'all'].includes(graphLoading)"></chart-loading>
     </div>
 </template>
 

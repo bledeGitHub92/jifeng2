@@ -42,10 +42,10 @@ export default {
             view.panels.find(panel => panel.name === name).chart = chart;
         },
         // 重置 当前路由对应的 -> 局部 state 的 chart 的 data
-        resetAllChart(state, { charts, yAlias }) {
-            charts.forEach((chart, index) => {
+        resetAllChart(state, { charts }) {
+            charts.forEach(chart => {
                 chart.reset();
-                chart.init(yAlias[index]);
+                chart.init();
             });
         },
         // 改变 当前路由对应的 -> 局部 state 的 active
@@ -60,7 +60,7 @@ export default {
         },
         // 重置 当前路由对应的 -> 局部 state 的 chart 的 data
         resetAllChart({ getters, commit }) {
-            commit('resetAllChart', { charts: getters.allCharts, yAlias: getters.computedTabNames });
+            commit('resetAllChart', { charts: getters.allCharts });
         },
         // 改变 当前路由对应的 -> 局部 state 的 active
         updateTab({ getters, commit }, { name, next }) {

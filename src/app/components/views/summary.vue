@@ -9,18 +9,16 @@
 
 <script>
 import Chart from '../../lib/Chart';
-import Request from 'lib/Request';
+import StatInfoBar from '../commons/statinfobar.vue';
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
 import JuiceContent from '../commons/juicecontent.vue';
 import JuicePanel from '../commons/juicepanel.vue';
-import StatInfoBar from '../commons/statinfobar.vue';
 import G2Chart from '../commons/g2chart.vue';
 
 export default {
     name: 'summary',
     components: {
-        JuiceContent, JuicePanel, StatInfoBar,
-        G2Chart
+        JuiceContent, JuicePanel, G2Chart, StatInfoBar
     },
     data() {
         return {
@@ -28,7 +26,7 @@ export default {
     },
     computed: {
         ...mapGetters('request', ['latestRequest']),
-        ...mapGetters('viewStates', ['viewState']),
+        ...mapGetters('viewStates', ['viewState', 'computedSocketEvents']),
         panels() {
             return this.viewState.panels;
         },
@@ -38,29 +36,20 @@ export default {
         ...mapActions('viewStates', ['setChart']),
         // 从 g2-chart 获取 chart
         getChart({ name, chart }) {
-            var chart = new Chart(chart),
-                panel = this.getPanel(name),
-                activeTabKey = panel.active,
-                activeTabValue = panel.tabs[activeTabKey];
+            var chart = new Chart(chart);
 
             this.setChart({ name, chart });
-
-            chart.init(activeTabValue);
-
-            this.sendMsg({ mode: 'socket', eventName: activeTabKey, request: { emitter: '实时概况', detail: activeTabValue } });
+            chart.init();
+            this.sendMsg({ mode: 'socket', eventName: this.computedSocketEvents, detail: '实时概况', loader: 'all' });
         },
         // 切换图表
         toggleTab(name) {
             var panel = this.getPanel(name),
-                chart = panel.chart,
-                activeTabKey = panel.active,
-                activeTabValue = panel.tabs[activeTabKey];
+                chart = panel.chart;
 
             chart.reset();
-            chart.init(activeTabValue);
-
-            this.sendMsg({ mode: 'socket', eventName: panel.active, request: { emitter: '实时概况', detail: panel.tabs[panel.active] } });
-
+            chart.init();
+            this.sendMsg({ mode: 'socket', eventName: panel.active, detail: panel.tabs[panel.active], loader: name });
             this.openChart(name);
         },
         // 更新图表
@@ -90,10 +79,6 @@ export default {
         },
     },
     mounted() {
-        // console.log(this.panels);
-    },
-    beforeDestroy() {
-        // this.charts.dynamic.reset();
     }
 }
 </script>

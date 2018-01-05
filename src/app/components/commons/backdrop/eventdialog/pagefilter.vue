@@ -5,7 +5,7 @@
                 <button v-for="btn of btns" :class="['am-btn','am-radius',btn.value===currentView?'am-btn-primary':'am-btn.default']" type="button" :key="btn.value">{{btn.text}}</button>
             </div>
             <div class="filter-search am-fr">
-                <input v-model="keyword" ref="keyword" type="text" placeholder="搜索">
+                <input v-model="keyword" ref="keyword" type="text" placeholder="搜索" v-focus>
             </div>
         </div>
         <div class="filter-body">
@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import Request from 'lib/Request';
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
 
 export default {
@@ -44,9 +43,8 @@ export default {
         }
     },
     computed: {
-        ...mapState([
-            'platform', 'channel', 'server', 'backdropState', 'socket'
-        ]),
+        ...mapState('dialog', ['backdropState']),
+        ...mapState(['platform', 'channel', 'server', 'socket']),
         ...mapGetters('viewStates', ['computedSocketEvents']),
         currentList() {
             this.backup = this[this.currentView];
@@ -64,8 +62,15 @@ export default {
             state && this.$refs.keyword.focus();
         }
     },
+    directives: {
+        focus: {
+            inserted(el) {
+                el.focus();
+            }
+        }
+    },
     methods: {
-        ...mapMutations(['changeBackdrop']),
+        ...mapMutations('dialog', ['changeBackdrop']),
         ...mapActions('request', ['sendMsg']),
         ...mapActions('viewStates', ['resetAllChart']),
         toggleItem({ target }) {
@@ -114,7 +119,7 @@ export default {
                 // 确定
                 case 'confirm':
                     this.resetAllChart();
-                    this.sendMsg({ mode: 'socket', eventName: this.computedSocketEvents, request: new Request({ emitter: '实时概况', detail: '实时概况' }) });
+                    this.sendMsg({ mode: 'socket', eventName: this.computedSocketEvents, detail: '实时概况', loader: 'all' });
                     this.changeBackdrop('hide');
                     break;
                 // 取消
@@ -125,8 +130,7 @@ export default {
         },
     },
     mounted() {
-        this.$refs.keyword.focus();
-        console.log(this.computedSocketEvents);
+        // this.$refs.keyword.focus();
     },
 }
 </script>

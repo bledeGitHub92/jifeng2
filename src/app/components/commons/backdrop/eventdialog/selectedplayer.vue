@@ -17,17 +17,14 @@ import { mapState, mapMutations } from 'vuex';
 export default {
     name: 'SelectedPlayer',
     computed: {
-        ...mapState([
-            'selectedPlayers'
-        ]),
+        ...mapState('players', ['selectedPlayers']),
         selectedPlayerNumber() {
             return this.selectedPlayers.length;
         }
     },
     methods: {
-        ...mapMutations([
-            'removePlayer', 'changeBackdrop'
-        ]),
+        ...mapMutations('players', ['removePlayer']),
+        ...mapMutations('dialog', ['changeBackdrop']),
         deletePlayer(player) {
             this.removePlayer(player);
             if (this.selectedPlayerNumber === 0) {

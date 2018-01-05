@@ -28,11 +28,8 @@ export default {
         }
     },
     computed: {
-        ...mapState([
-            'enabledEventDialog'
-        ]),
+        ...mapState('dialog', ['enabledEventDialog']),
     },
-
 }
 </script>
 

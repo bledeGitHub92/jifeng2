@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import PlayerModal from './playermodal.vue';
+import PlayerModal from './modalwidget/playermodal.vue';
 import { mapState, mapMutations } from 'vuex';
 
 export default {
@@ -30,10 +30,10 @@ export default {
         }
     },
     computed: {
-        ...mapState(['widgetList']),
+        ...mapState('widget', ['widgetList']),
     },
     methods: {
-        ...mapMutations(['toggleWidget']),
+        ...mapMutations('widget', ['toggleWidget']),
         closeWidget(event) {
             var title = event.target.previousElementSibling.textContent;
 

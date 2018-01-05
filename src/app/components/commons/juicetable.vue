@@ -6,7 +6,7 @@
             <span style="float:right;">csv</span>
             <span style="float:right;">excel</span>
         </div>
-        <table class="table-widget" @mousedown.stop="selectRow" @contextmenu="showContext" @mousewheel="swipeTable" @DOMMouseScroll="swipeTable" :style="{'left':leftOfTable+'px'}">
+        <table class="table-widget" @mousedown.stop="selectRow" @contextmenu.prevent="showContext" @mousewheel="swipeTable" @DOMMouseScroll="swipeTable" :style="{'left':leftOfTable+'px'}">
             <tr>
                 <th v-for="i of 21" :key="i" title="战力">战力</th>
             </tr>
@@ -45,9 +45,7 @@ export default {
         }
     },
     computed: {
-        ...mapState([
-            'selectedPlayers'
-        ]),
+        ...mapState('players', ['selectedPlayers']),
         // 分组后的表格
         breakList() {
             var partOfTable = [],
@@ -75,12 +73,9 @@ export default {
         }
     },
     methods: {
-        ...mapMutations([
-            'setMenuLocation', 'showMenu', 'hideMenu',
-            'updateCopyValue', 'addPlayer',
-            'changeSelectedMode', 'changeSelectedMode',
-        ]),
-        ...mapActions(['togglePlayer']),
+        ...mapMutations('contextmenu', ['showMenu', 'hideMenu', 'changeSelectedMode', 'updateCopyValue', 'setMenuLocation']),
+        ...mapMutations('players', ['addPlayer']),
+        ...mapActions('players', ['togglePlayer']),
         // 选择行
         selectRow({ target, button }) {
             this.hideMenu();
@@ -121,7 +116,7 @@ export default {
             var wheelDelta = event.wheelDelta || event.detail * -40,
                 maxLeft = this.$el.offsetWidth - getParent(event.target, '.table-widget').offsetWidth,
                 multiple = Math.abs(wheelDelta) / 120,
-                step = 30 * multiple;
+                step = 120 * multiple;
 
             if (wheelDelta < 0) {
                 this.leftOfTable -= step;
@@ -137,8 +132,6 @@ export default {
         },
         // TODO: 仅在框内显示
         showContext(event) {
-            event.preventDefault();
-
             this.updateCopyValue(event.target.title);
             this.showMenu();
             this.setMenuLocation({

@@ -3,7 +3,10 @@
         <selected-player></selected-player>
         <form name="sendmail" action="#">
             <p>
-                <input class="am-radius" type="text" placeholder="邮件类型">
+                <select name="mailType">
+                    <option value="1">资源发放</option>
+                    <option value="2">系统公告</option>
+                </select>
             </p>
             <p>
                 <input class="am-radius" type="text" placeholder="邮件标题">
@@ -13,7 +16,7 @@
             </p>
         </form>
         <div class="sendmail-footer clearfix">
-            <button class="am-btn am-radius am-btn-primary am-fr" type="button">确认</button>
+            <button @click="submit" class="am-btn am-radius am-btn-primary am-fr" type="button">确认</button>
             <button class="am-btn am-radius am-btn-default am-fr" type="button">取消</button>
         </div>
     </div>
@@ -21,11 +24,20 @@
 
 <script>
 import SelectedPlayer from '../selectedplayer.vue';
+import { mapMutations, mapActions } from 'vuex';
 
 export default {
     name: 'SendMail',
     components: {
         SelectedPlayer
+    },
+    methods: {
+        ...mapMutations('dialog', ['changeBackdrop']),
+        ...mapActions('request', ['sendMsg']),
+        submit() {
+            this.changeBackdrop('hide');
+            this.sendMsg({ mode: 'ajax', eventName: '123123', detail: '发送邮件', recordable: true });
+        }
     }
 }
 </script>
@@ -54,7 +66,8 @@ label {
     margin: 0;
 }
 
-input {
+input,
+select {
     border: 1px solid #bbb;
     width: 100%;
     padding: 10px;

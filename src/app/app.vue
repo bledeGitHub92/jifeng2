@@ -11,8 +11,8 @@
 </template>
 
 <script>
-import SideNav from './components/layouts/sidenav/sidenav.vue';
-import RightSlider from './components/layouts/rightslider/rightslider.vue';
+import SideNav from './components/layouts/sidenav.vue';
+import RightSlider from './components/layouts/rightslider.vue';
 import ModalWidget from './components/commons/modalwidget.vue';
 import ContextMenu from './components/commons/contextmenu.vue';
 import BackDrop from './components/commons/backdrop.vue';
@@ -32,14 +32,12 @@ export default {
         ContextMenu, BackDrop
     },
     computed: {
-        ...mapState([
-            'widgetList', 'menuList', 'copyValue', 'platform'
-        ]),
+        ...mapState('contextmenu', ['menuList', 'copyValue']),
+        ...mapState('widget', ['widgetList']),
+        ...mapState(['platform']),
     },
     methods: {
-        ...mapMutations([
-            'hideMenu'
-        ]),
+        ...mapMutations('contextmenu', ['hideMenu']),
         ...mapMutations('request', ['changeTipScrollTop']),
         // 初始化 contextmenu 的功能
         initContextmenuEvent() {
@@ -71,7 +69,7 @@ export default {
                 ];
 
             array = array.filter(obj => menu.some(item => item.className.indexOf(obj.className) !== -1));
-            array.forEach(obj => { obj.method(); });
+            array.forEach(obj => void obj.method());
         },
         mousewheelListener({ target, wheelDelta, detail }) {
             var delta = wheelDelta || detail * -40;
@@ -173,7 +171,7 @@ body,
 body {
     background: url('./bg.jpg') no-repeat top center fixed;
     background-size: cover;
-    font-family: "Segoe UI", "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", "微软雅黑", "宋体"; // overflow: hidden;
+    font-family: "Segoe UI", "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", "微软雅黑", "宋体";
 }
 
 ul {

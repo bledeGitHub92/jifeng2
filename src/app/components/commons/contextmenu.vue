@@ -27,7 +27,7 @@ export default {
         }
     },
     computed: {
-        ...mapState([
+        ...mapState('contextmenu', [
             'menuLeft', 'menuTop', 'menuState',
             'menuList', 'selectedMode'
         ]),
@@ -42,10 +42,8 @@ export default {
         },
     },
     methods: {
-        ...mapMutations([
-            'changeBackdrop', 'hideMenu',
-            'changeEventDialog'
-        ]),
+        ...mapMutations('dialog', ['changeBackdrop', 'changeEventDialog']),
+        ...mapMutations('contextmenu', ['hideMenu']),
         forbidMenu(event) {
             event.preventDefault();
         },

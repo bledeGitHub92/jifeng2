@@ -3,43 +3,46 @@
         <ul class="realtime-info">
             <li v-for="(col,colIndex) of statInfo" :key="colIndex">
                 <div @mouseenter="showDetail(colIndex)" @mouseleave="hideDetail(colIndex)" class="realtime-content">
+                    <chart-loading :is-load="graphLoading==='all'"></chart-loading>
                     <h3>{{col.title}}</h3>
                     <p>
                         <span class="realtime-data">{{col.data}}</span>
                         <span class="realtime-delta">+{{col.delta}}</span>
                     </p>
-                    <div v-show="detailState[colIndex]" class="realtime-detail">
-                        <p>
-                            <span class="realtime-date">昨日</span>
-                            <span class="realtime-past-data">
-                                <span>：</span>
-                                {{col.detail[0]}}
-                            </span>
-                            <span :class="['realtime-month-on-month', col.data-col.detail[0]>0?['am-icon-level-up', 'up']:['am-icon-level-down', 'down']]">
-                                {{Math.abs(((col.data-col.detail[0])/col.detail[0]*100).toFixed(2))}} %
-                            </span>
-                        </p>
-                        <p>
-                            <span class="realtime-date">7日前</span>
-                            <span class="realtime-past-data">
-                                <span>：</span>
-                                {{col.detail[1]}}
-                            </span>
-                            <span :class="['realtime-month-on-month', col.data-col.detail[1]>0?['am-icon-level-up','up']:['am-icon-level-down','down']]">
-                                {{Math.abs(((col.data-col.detail[1])/col.detail[1]*100).toFixed(2))}} %
-                            </span>
-                        </p>
-                        <p>
-                            <span class="realtime-date">30日前</span>
-                            <span class="realtime-past-data">
-                                <span>：</span>
-                                {{col.detail[2]}}
-                            </span>
-                            <span :class="['realtime-month-on-month', col.data-col.detail[2]>0?['am-icon-level-up','up']:['am-icon-level-down','down']]">
-                                {{Math.abs(((col.data-col.detail[2])/col.detail[2]*100).toFixed(2))}} %
-                            </span>
-                        </p>
-                    </div>
+                    <transition>
+                        <div v-show="detailState[colIndex]" class="realtime-detail">
+                            <p>
+                                <span class="realtime-date">昨日</span>
+                                <span class="realtime-past-data">
+                                    <span>：</span>
+                                    {{col.detail[0]}}
+                                </span>
+                                <span :class="['realtime-month-on-month', col.data-col.detail[0]>0?['am-icon-level-up', 'up']:['am-icon-level-down', 'down']]">
+                                    {{parseInt(Math.abs(((col.data-col.detail[0])/col.detail[0]*100)))}} %
+                                </span>
+                            </p>
+                            <p>
+                                <span class="realtime-date">7日前</span>
+                                <span class="realtime-past-data">
+                                    <span>：</span>
+                                    {{col.detail[1]}}
+                                </span>
+                                <span :class="['realtime-month-on-month', col.data-col.detail[1]>0?['am-icon-level-up','up']:['am-icon-level-down','down']]">
+                                    {{parseInt(Math.abs(((col.data-col.detail[1])/col.detail[1]*100)))}} %
+                                </span>
+                            </p>
+                            <p>
+                                <span class="realtime-date">30日前</span>
+                                <span class="realtime-past-data">
+                                    <span>：</span>
+                                    {{col.detail[2]}}
+                                </span>
+                                <span :class="['realtime-month-on-month', col.data-col.detail[2]>0?['am-icon-level-up','up']:['am-icon-level-down','down']]">
+                                    {{parseInt(Math.abs(((col.data-col.detail[2])/col.detail[2]*100)))}} %
+                                </span>
+                            </p>
+                        </div>
+                    </transition>
                 </div>
             </li>
         </ul>
@@ -49,9 +52,11 @@
 <script>
 import ajax from 'lib/ajax';
 import { mapState } from 'vuex';
+import ChartLoading from './chart/chartloading.vue';
 
 export default {
     name: 'StatInfoBar',
+    components: { ChartLoading },
     data() {
         return {
             statInfo: [
@@ -120,7 +125,8 @@ export default {
         }
     },
     computed: {
-        ...mapState(['socket'])
+        ...mapState(['socket']),
+        ...mapState('request', ['graphLoading'])
     },
     methods: {
         initStatInfo() {
@@ -138,7 +144,6 @@ export default {
                     this.statInfo = realtime;
                 }
             });
-            socket.emit('start delta');
         },
         showDetail(index) {
             this.detailState.length = index;
@@ -160,6 +165,17 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.v-enter,
+.v-leave-to {
+    opacity: 0;
+    transform: rotateY(90deg);
+}
+
+.v-enter-active,
+.v-leave-active {
+    transition: all .3s;
+}
+
 .stat-info-bar {
     margin-top: 30px;
     animation: pop-appear 0.3s cubic-bezier(0.8, 0.02, 0.45, 0.91) forwards;
@@ -198,33 +214,18 @@ export default {
             }
 
             .realtime-detail {
-                &::before {
-                    content: ' ';
-                    position: absolute;
-                    bottom: -8px;
-                    left: 20px;
-                    border-top: 8px solid rgba(0, 0, 0, .9);
-                    border-left: 8px solid transparent;
-                    border-right: 8px solid transparent;
-                    width: 0;
-                    height: 0;
-                    display: block;
-                }
-
-                animation: pop-appear 0.3s cubic-bezier(0.8, 0.02, 0.45, 0.91) forwards;
+                padding: 10px 20px;
                 pointer-events: none;
                 position: absolute;
-                max-width: 260px;
-                width: 100%;
-                padding: 10px 20px;
-                background-color: rgba(0, 0, 0, .9);
-                border-radius: 3px;
                 left: 0;
-                top: -100%;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: #fff;
+                border-radius: 3px;
 
                 p {
                     .realtime-date {
-                        color: darken(#fff, 15%);
                         text-align: justify;
                         text-align-last: justify;
                         width: 50px;
@@ -232,13 +233,14 @@ export default {
                     }
 
                     .realtime-past-data {
-                        color: #fff;
+                        font-weight: 600;
+                        color: #0e90d2;
                         float: left;
                         text-align: right;
 
                         span {
                             margin-right: 4px;
-                            color: darken(#fff, 15%);
+                            color: #333;
                         }
                     }
 
@@ -274,7 +276,17 @@ export default {
     }
 }
 
-@media screen and (max-width:1300px) {
+@media (max-width:1300px) {
+    .stat-info-bar {
+        .realtime-info {
+            &>li {
+                width: 25%;
+            }
+        }
+    }
+}
+
+@media (max-width:1000px) {
     .stat-info-bar {
         .realtime-info {
             &>li {
@@ -284,7 +296,7 @@ export default {
     }
 }
 
-@media screen and (max-width:700px) {
+@media (max-width:700px) {
     .stat-info-bar {
         .realtime-info {
             &>li {

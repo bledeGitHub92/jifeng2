@@ -59,11 +59,12 @@ export default {
         },
         // 初始化 tabs 事件监听
         initTabs() {
-            this.socketEvents.forEach(name => {
-                this.socket.on(`start ${name}`, res => {
-                    this.$emit('getServerData', { name: this.name, data: res[this.active] });
-                });
-            });
+            this.socketEvents.forEach(
+                name => void this.socket.on(
+                    `start ${name}`,
+                    res => void this.$emit('getServerData', { name: this.name, data: res[this.active] })
+                )
+            );
         },
         // 销毁 tabs 事件监听
         destroyTabs() {

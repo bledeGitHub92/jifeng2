@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import JuiceTable from './juicetable.vue';
-import JuiceSelect from './juiceselect.vue';
+import JuiceTable from '../juicetable.vue';
+import JuiceSelect from '../juiceselect.vue';
 import { mapMutations } from 'vuex';
 
 export default {
@@ -24,7 +24,7 @@ export default {
         JuiceTable, JuiceSelect
     },
     methods: {
-        ...mapMutations(['clearPlayer']),
+        ...mapMutations('players', ['clearPlayer']),
     }
 }
 </script>

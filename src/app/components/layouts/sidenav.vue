@@ -1,31 +1,28 @@
 <template>
-    <div :class="{'hide':navbarState}" class="sidenav">
+    <div class="sidenav">
         <div class="logo am-g am-g-collapse">
             <div class="am-u-sm-8 am-vertical-align">
                 <h1 class="am-vertical-align-middle">Juice Game</h1>
             </div>
-            <div class="toggle-menu am-u-sm-4 am-hide-sm-only am-vertical-align am-text-right">
-                <span @click="toggleSidenav" class="am-vertical-align-middle am-icon-bars"></span>
-            </div>
         </div>
-        <div :class="{'am-hide-sm-only':!navbarState}" class="search-show">
+        <div class="search-show am-hide-sm-only">
             <input type="text" placeholder="search Menu...">
         </div>
-        <div :class="{'am-show-sm-only':!navbarState}" class="search-hide">
+        <div class="search-hide am-show-sm-only">
             <input type="text" placeholder="search Menu...">
         </div>
         <div class="menu">
-            <ul v-for="item in defaultMenuList" :key="item.name" :style='ulMargin'>
-                <li :class="{'am-hide-sm-only': !navbarState,'active':item.lists.some(list => list.url===route.path)&&!folderState.includes(item.name)}" class="menu-title">
+            <ul v-for="item in defaultMenuList" :key="item.name">
+                <li :class="{'active':item.lists.some(list => list.url===route.path)&&!folderState.includes(item.name)}" class="menu-title am-hide-sm-only">
                     <span>{{item.name}}</span>
                     <i @click="toggleMenuItem" class="gear-switch am-icon-gear"></i>
                 </li>
                 <li class="menu-list">
-                    <ul :class="{'am-block':navbarState}">
+                    <ul>
                         <li @mouseenter="showtooltip" @mouseleave="hidetooltip" v-for="list in item.lists" :key="list.name" :class="{'active':route.path===list.url}" class="menu-item">
                             <router-link :to="list.url">
-                                <i :class="[{'am-icon-sm': navbarState, 'am-fr': navbarState}, list.icon]" class="item-icon"></i>
-                                <span :class="{'am-hide-sm-only': !navbarState}">{{list.name}}</span>
+                                <i :class="['item-icon', list.icon]"></i>
+                                <span class="am-hide-sm-only">{{list.name}}</span>
                             </router-link>
                         </li>
                     </ul>
@@ -56,17 +53,7 @@ export default {
         ...mapState([
             'route',
             'defaultMenuList',
-            'contentBlockMarginLeft',
         ]),
-        navbarState() {
-            return this.contentBlockMarginLeft === 50;
-        },
-        // ul 外边距
-        ulMargin() {
-            return {
-                'margin': this.navbarState ? 0 : '10px'
-            }
-        }
     },
     watch: {
         folderState(menu, pre) {
@@ -103,9 +90,6 @@ export default {
         });
     },
     methods: {
-        ...mapMutations([
-            'toggleSidenav'
-        ]),
         toggleMenuItem(e) {
             var menuName = e.target.previousElementSibling.textContent;
 
@@ -140,7 +124,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@media only screen and (max-width: 640px) {
+@media (max-width: 640px) {
     .sidenav {
         left: -210px !important;
     }

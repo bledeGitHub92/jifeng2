@@ -43,7 +43,7 @@
         </div>
         <!-- juice-panel  -->
         <router-view></router-view>
-        <div :style="marginLeft" class="footer am-vertical-align">
+        <div class="footer am-vertical-align">
             <ul @click="showWidget" class="thumbnail-list am-vertical-align-middle am-btn-group">
                 <li v-for="widget of widgets" :title="widget.alias" :class="{'active':widgetList.includes(widget)}" :key="widget.name" class="thumbnail-item am-icon-qq am-icon-sm am-btn"></li>
             </ul>
@@ -72,15 +72,11 @@ export default {
         }
     },
     computed: {
-        ...mapState(['widgetList', 'contentBlockMarginLeft']),
-        marginLeft() {
-            return { marginLeft: this.contentBlockMarginLeft + 'px' };
-        }
+        ...mapState('widget', ['widgetList']),
     },
     methods: {
-        ...mapMutations([
-            'toggleWidget', 'changeBackdrop', 'changeEventDialog'
-        ]),
+        ...mapMutations('dialog', ['changeBackdrop', 'changeEventDialog']),
+        ...mapMutations('widget', ['toggleWidget']),
         showWidget({ target }) {
             var title = target.title,
                 length = this.widgetList.length,
@@ -306,6 +302,10 @@ function initWidgetStack(widget, counter) {
     }
 
     .footer {
+        margin-left: 260px;
+        @media (max-width: 640px) {
+            margin-left: 50px;
+        }
         height: 50px;
         position: fixed;
         left: 0px;

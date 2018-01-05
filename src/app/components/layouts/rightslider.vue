@@ -1,14 +1,14 @@
 <template>
-    <div :style="marginLeft" class="right-slider">
-        <top-nav @toggleTips="toggleTips" :queue-state="queueState"></top-nav>
+    <div class="right-slider">
+        <top-nav></top-nav>
         <juice-body :widgets="widgets" :filter-detail-state="filterDetailState"></juice-body>
     </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex';
-import TopNav from './topnav/topnav.vue';
-import JuiceBody from './juicebody/juicebody.vue';
+import TopNav from './rightslider/topnav.vue';
+import JuiceBody from './rightslider/juicebody.vue';
 import { stackCounter } from 'lib/utils';
 
 export default {
@@ -27,16 +27,10 @@ export default {
             ],
             // filter detail
             filterDetailState: false,
-            queueState: ''
         }
     },
     computed: {
-        ...mapState([
-            'contentBlockMarginLeft', 'widgetList'
-        ]),
-        marginLeft() {
-            return { marginLeft: this.contentBlockMarginLeft + 'px' };
-        }
+        ...mapState('widget', ['widgetList']),
     },
     mounted() {
         // keydown 句柄
@@ -52,14 +46,9 @@ export default {
         document.removeEventListener('mousedown', this.mousedownListener, false);
     },
     methods: {
-        ...mapMutations([
-            'toggleWidget', 'hideTip'
-        ]),
+        ...mapMutations('widget', ['toggleWidget']),
+        ...mapMutations('request', ['hideTip']),
         ...mapActions(['closeDialog']),
-        toggleTips(className) {
-            var queueState = this.queueState;
-            this.queueState = queueState && queueState === className ? '' : className;
-        },
         mousedownListener() {
             // -- TopNav --
             // 关闭 tips
@@ -136,16 +125,13 @@ function initWidgetStack(widget, counter) {
 </script>
 
 <style lang="less" scoped>
-@media only screen and (max-width: 640px) {
-    .right-slider {
-        margin-left: 50px !important;
-    }
-}
-
 .right-slider {
     height: 100%;
     padding-bottom: 75px;
     margin-left: 260px;
+    @media (max-width: 640px) {
+        margin-left: 50px;
+    }
     transition: margin .1s;
 }
 </style>

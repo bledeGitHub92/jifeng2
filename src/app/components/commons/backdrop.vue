@@ -9,7 +9,7 @@
 <script>
 import { mapState, mapMutations } from 'vuex';
 import { getParent } from 'lib/utils';
-import EventDialog from './eventdialog.vue';
+import EventDialog from './backdrop/eventdialog.vue';
 
 export default {
     components: {
@@ -17,12 +17,10 @@ export default {
     },
     name: 'BackDrop',
     computed: {
-        ...mapState(['backdropState'])
+        ...mapState('dialog', ['backdropState'])
     },
     methods: {
-        ...mapMutations([
-            'changeBackdrop'
-        ]),
+        ...mapMutations('dialog', ['changeBackdrop']),
         hideBackdrop(event) {
             var target = event.target;
             if (!getParent(target, '.event-dialog')) {
@@ -34,13 +32,18 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.v-enter,.v-leave-to {
+.v-enter,
+.v-leave-to {
     opacity: 0;
 }
-.v-enter-active,.v-leave-active {
+
+.v-enter-active,
+.v-leave-active {
     transition: opacity .3s;
 }
-.blur,.backdrop {
+
+.blur,
+.backdrop {
     position: fixed;
     left: 0;
     right: 0;
