@@ -12,7 +12,7 @@ class Chart {
             time: {
                 type: 'time',
                 tickCount: 6,
-                mask: 'yyyy-mm-dd hh:MM:ss'
+                mask: 'yyyy-mm-dd hh:MM'
             },
             amount: {
                 type: 'linear'

@@ -1,7 +1,7 @@
 <template>
     <div class="selected-player">
         <div class="player-container clearfix">
-            <span @click.stop="deletePlayer(player)" v-for="player of selectedPlayers" :key="player.id" :title="player.name+'\n'+player.id" class="am-icon-user">
+            <span @click.stop="removePlayer(player)" v-for="player of selectedPlayers" :key="player.id" :title="player.name+'\n'+player.id" class="am-icon-user">
                 {{player.name}}
             </span>
         </div>
@@ -22,15 +22,16 @@ export default {
             return this.selectedPlayers.length;
         }
     },
-    methods: {
-        ...mapMutations('players', ['removePlayer']),
-        ...mapMutations('dialog', ['changeBackdrop']),
-        deletePlayer(player) {
-            this.removePlayer(player);
-            if (this.selectedPlayerNumber === 0) {
+    watch: {
+        selectedPlayerNumber(value) {
+            if (value === 0) {
                 this.changeBackdrop('hide');
             }
         }
+    },
+    methods: {
+        ...mapMutations('players', ['removePlayer']),
+        ...mapMutations('dialog', ['changeBackdrop']),
     }
 }
 </script>
@@ -39,6 +40,7 @@ export default {
 .selected-player {
     padding: 20px 0;
 }
+
 .selected-counter {
     margin: 0;
     background-color: #f7f7f7;

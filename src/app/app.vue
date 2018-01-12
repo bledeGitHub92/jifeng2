@@ -6,6 +6,7 @@
         </div>
         <modal-widget v-for="widget of widgetList" :key="widget.title" :msg="widget" :id="'modal-'+widget.name"></modal-widget>
         <back-drop></back-drop>
+        <filter-checked></filter-checked>
         <context-menu></context-menu>
     </div>
 </template>
@@ -16,6 +17,7 @@ import RightSlider from './components/layouts/rightslider.vue';
 import ModalWidget from './components/commons/modalwidget.vue';
 import ContextMenu from './components/commons/contextmenu.vue';
 import BackDrop from './components/commons/backdrop.vue';
+import FilterChecked from './components/commons/FilterChecked.vue';
 import { mapState, mapMutations } from 'vuex';
 import DragDrop from 'lib/dragDrop';
 import { getParent } from 'lib/utils';
@@ -29,16 +31,14 @@ export default {
     name: 'app',
     components: {
         SideNav, RightSlider, ModalWidget,
-        ContextMenu, BackDrop
+        ContextMenu, BackDrop, FilterChecked
     },
     computed: {
         ...mapState('contextmenu', ['menuList', 'copyValue']),
         ...mapState('widget', ['widgetList']),
-        ...mapState(['platform']),
     },
     methods: {
         ...mapMutations('contextmenu', ['hideMenu']),
-        ...mapMutations('request', ['changeTipScrollTop']),
         // 初始化 contextmenu 的功能
         initContextmenuEvent() {
             var menu = this.menuList,
@@ -54,9 +54,6 @@ export default {
                             });
                             // TODO: 复制成功后的提示
                             clipboard.on('success', function(event) {
-                                // console.info('Action:', event.action);
-                                // console.info('Text:', event.text);
-                                // console.info('Trigger:', event.trigger);
                                 ctx.hideMenu();
                                 event.clearSelection();
                             });
@@ -77,21 +74,6 @@ export default {
             if (getParent(target, '.table-widget')) {
                 event.preventDefault();
             }
-
-            // info-tips 自定义自定义滚动条
-            var tipsRef, tipsWrapper;
-            if (tipsRef = getParent(target, '.tips-dropdown-ref')) {
-                tipsWrapper = tipsRef.firstElementChild;
-                minTop = tipsRef.offsetHeight + 1 - tipsWrapper.offsetHeight;
-                prev = parseInt(tipsWrapper.style.top);
-                next = (prev || 0) + delta / 2;
-                if (minTop < 0) {
-                    this.changeTipScrollTop(next >= 0 ? 0 : next < minTop ? minTop : next);
-                } else if (prev < 0 && delta > 0) {
-                    this.changeTipScrollTop(next > 0 ? 0 : next);
-                }
-            }
-
             // juice-content 自定义滚动条
             var slideWrapper, juiceContent, minTop, prev, next;
             if (juiceContent = getParent(target, '.juice-content')) {

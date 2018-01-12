@@ -173,7 +173,7 @@ export default {
 
 .v-enter-active,
 .v-leave-active {
-    transition: all .3s;
+    transition: all .4s;
 }
 
 .stat-info-bar {

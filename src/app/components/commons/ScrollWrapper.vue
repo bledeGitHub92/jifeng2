@@ -29,7 +29,6 @@ export default {
             } else if (prev < 0 && delta > 0) {
                 this.top = next > 0 ? 0 : next;
             }
-            console.log(prev, next)
         }
     },
 }

@@ -37,13 +37,27 @@ async function initStore() {
             socket,
             // sidenav
             defaultMenuList,
+            // 使用中的筛选方式
+            currFilter: 'platform',
+            // 筛选集合
+            checkedFilter: [],
         },
         getters: {
+            // 当前路由
             currView(state, getters) {
                 return state.route.path.slice(1);
-            }
+            },
         },
-        mutations: {},
+        mutations: {
+            // 修改筛选方式
+            updateCurrFilter(state, name) {
+                state.currFilter = name;
+            },
+            // 设置筛选集合
+            setCheckedFilter(state, filter) {
+                state.checkedFilter = filter;
+            },
+        },
         actions: {
             closeDialog({ state, commit }, isEsc) {
                 if (isEsc) {

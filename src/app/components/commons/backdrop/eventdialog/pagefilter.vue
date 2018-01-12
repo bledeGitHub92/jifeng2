@@ -2,7 +2,7 @@
     <div @click="toggleItem" class="page-filter">
         <div class="filter-header clearfix">
             <div class="filter-options am-fl am-btn-group">
-                <button v-for="btn of btns" :class="['am-btn','am-radius',btn.value===currentView?'am-btn-primary':'am-btn.default']" type="button" :key="btn.value">{{btn.text}}</button>
+                <button v-for="btn of btns" :class="['am-btn','am-radius',btn.value===currFilter?'am-btn-primary':'am-btn.default']" type="button" :key="btn.value">{{btn.text}}</button>
             </div>
             <div class="filter-search am-fr">
                 <input v-model="keyword" ref="keyword" type="text" placeholder="搜索" v-focus>
@@ -31,9 +31,8 @@ export default {
     name: 'PageFilter',
     data() {
         return {
+            // 搜索框
             keyword: '',
-            currentView: 'platform',
-            backup: [],
             checked: [],
             btns: [
                 { text: '平台', value: 'platform' },
@@ -43,15 +42,15 @@ export default {
         }
     },
     computed: {
+        ...mapState(['currFilter', 'platform', 'channel', 'server', 'socket']),
         ...mapState('dialog', ['backdropState']),
-        ...mapState(['platform', 'channel', 'server', 'socket']),
         ...mapGetters('viewStates', ['computedSocketEvents']),
+        // 当前筛选列表
         currentList() {
-            this.backup = this[this.currentView];
-            return this.backup.filter(({ text }) => text.toLowerCase().indexOf(this.keyword.toLowerCase()) !== -1);
+            return this[this.currFilter].filter(({ text }) => text.toLowerCase().indexOf(this.keyword.toLowerCase()) !== -1);
         },
         isAll() {
-            if (this.checked.length === this[this.currentView].length) {
+            if (this.checked.length === this[this.currFilter].length) {
                 this.checked = [];
             }
             return this.checked.length === 0;
@@ -70,6 +69,7 @@ export default {
         }
     },
     methods: {
+        ...mapMutations(['updateCurrFilter', 'setCheckedFilter']),
         ...mapMutations('dialog', ['changeBackdrop']),
         ...mapActions('request', ['sendMsg']),
         ...mapActions('viewStates', ['resetAllChart']),
@@ -90,19 +90,15 @@ export default {
             switch (type) {
                 // 列表选择
                 case 'check':
-                    if (index !== -1) checked.splice(index, 1);
-                    else checked.push(text);
+                    if (index !== -1) this.checked.splice(index, 1);
+                    else this.checked.push(text);
                     break;
                 // 平台-渠道-区服
                 case 'type':
                     this.$refs.keyword.focus();
                     this.keyword = '';
                     this.checked = [];
-                    this.currentView = [
-                        { text: '平台', id: 'platform' },
-                        { text: '渠道', id: 'channel' },
-                        { text: '区服', id: 'server' },
-                    ].find(item => item.text === text).id;
+                    this.updateCurrFilter(this.btns.find(item => item.text === text).value);
                     break;
                 // 全选-反选
                 case 'invert':
@@ -119,6 +115,7 @@ export default {
                 // 确定
                 case 'confirm':
                     this.resetAllChart();
+                    this.setCheckedFilter(this.checked);
                     this.sendMsg({ mode: 'socket', eventName: this.computedSocketEvents, detail: '实时概况', loader: 'all' });
                     this.changeBackdrop('hide');
                     break;
@@ -128,9 +125,6 @@ export default {
                     break;
             }
         },
-    },
-    mounted() {
-        // this.$refs.keyword.focus();
     },
 }
 </script>

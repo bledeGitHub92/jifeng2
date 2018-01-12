@@ -15,11 +15,6 @@ export default {
     props: {
         list: { type: Array, required: true },
         top: { type: Number, required: true }
-    },
-    watch: {
-        top(value) {
-            console.log(value);
-        }
     }
 }
 </script>

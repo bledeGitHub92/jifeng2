@@ -5,9 +5,9 @@
             <i class="am-icon-times"></i>
         </div>
         <div class="event-dialog-body">
-            <keep-alive>
+             <keep-alive> 
                 <component :is="enabledEventDialog"></component>
-            </keep-alive>
+             </keep-alive> 
         </div>
     </div>
 </template>

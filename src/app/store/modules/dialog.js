@@ -10,7 +10,6 @@ export default {
     mutations: {
         // 改变背景层
         changeBackdrop(state, payload) {
-            console.log(payload);
             if (payload === 'show') {
                 state.backdropState = true;
             }

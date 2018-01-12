@@ -43,7 +43,7 @@ export default {
         ScrollWrapper, TipList
     },
     computed: {
-        ...mapState('request', ['mark', 'tipState', 'tipCounter', 'tipQueue', 'recordableQueue', 'tipScrollTop']),
+        ...mapState('request', ['mark', 'tipState', 'tipCounter', 'tipQueue', 'recordableQueue']),
         ...mapGetters('request', ['latestRequest']),
         emitter() {
             return this.latestRequest.emitter;
@@ -85,7 +85,7 @@ export default {
 
 .v-enter,
 .v-leave-to {
-    transform: translateY(10px);
+    transform: translateY(20px);
     opacity: 0;
 }
 

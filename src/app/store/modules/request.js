@@ -18,8 +18,6 @@ export default {
         tipQueue: [],
         // 有记录的消息队列
         recordableQueue: [],
-        // 消息队列 top
-        tipScrollTop: 0
     },
     getters: {
         latestRequest(state) {
@@ -96,10 +94,6 @@ export default {
         shiftRecord(state) {
             state.recordableQueue.shift();
         },
-        // 重置消息队列滚动条的位置
-        changeTipScrollTop(state, top = 0) {
-            state.tipScrollTop = top;
-        },
     },
     actions: {
         // socket
@@ -118,7 +112,6 @@ export default {
             dispatch(mode, eventName);
             commit('showTip');
             commit('clearTipTimer');
-            commit('changeTipScrollTop');
             commit('showGraphLoading', loader);
             if (recordable) {
                 commit('setMark', 'record');

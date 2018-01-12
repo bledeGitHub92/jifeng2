@@ -26,7 +26,6 @@ class Request {
             this.state = 'success';
             commit('request/clearTipTimer');
             commit('request/showTipShortly');
-            commit('request/changeTipScrollTop');
             commit('request/hideGraphLoading');
         }
         return this;
