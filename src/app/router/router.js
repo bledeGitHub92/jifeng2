@@ -3,10 +3,10 @@ import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
 
-import summary from '../components/views/summary.vue';
-
 const routes = [
-    { path: '/summary', component: summary },
+    { path: '/summary', component: resolve => {
+        require.ensure([], () => void resolve(require('../components/views/summary.vue')), 'summary');
+    }},
 ]
 
 const router = new VueRouter({

@@ -47,7 +47,7 @@ export default {
             var panel = this.getPanel(name),
                 chart = panel.chart;
 
-            chart.reset();
+            // chart.reset();
             chart.init();
             this.sendMsg({ mode: 'socket', eventName: panel.active, detail: panel.tabs[panel.active], loader: name });
             this.openChart(name);
